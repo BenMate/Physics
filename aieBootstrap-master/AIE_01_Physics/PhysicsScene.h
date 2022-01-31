@@ -12,8 +12,8 @@ public:
 	PhysicsScene();
 	~PhysicsScene();
 
-	void AddVector(PhysicsObject* a_actor);
-	void RemoveVector(PhysicsObject* a_actor);
+	void AddActor(PhysicsObject* a_actor);
+	void RemoveActor(PhysicsObject* a_actor);
 
 	/* this functions will update the physics simulation
 	it calls the update each actor and updates	

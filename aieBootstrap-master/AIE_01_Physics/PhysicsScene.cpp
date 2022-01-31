@@ -5,6 +5,7 @@
 #include "PhysicsObject.h"
 #include "RigidBody.h"
 #include "Sphere.h"
+#include "Box.h"
 
 
 
@@ -22,13 +23,13 @@ PhysicsScene::~PhysicsScene()
 	}
 }
 
-void PhysicsScene::AddVector(PhysicsObject* a_actor)
+void PhysicsScene::AddActor(PhysicsObject* a_actor)
 {
 	m_actors.push_back(a_actor);
 
 }
 
-void PhysicsScene::RemoveVector(PhysicsObject* a_actor)
+void PhysicsScene::RemoveActor(PhysicsObject* a_actor)
 {
 	auto it = std::find(m_actors.begin(), m_actors.end(), a_actor);
 	if (it != m_actors.end()) 
@@ -79,7 +80,7 @@ void PhysicsScene::Update(float a_dt)
 					continue;
 				
 				RigidBody* pRigid = dynamic_cast<RigidBody*>(pActor);
-				if (pRigid->CheckCollosion(pOther)) 
+				if (pRigid->CheckCollision(pOther)) 
 				{
 					pRigid->ApplyForceToActor(dynamic_cast<RigidBody*>(pOther),
 						pRigid->GetVelocity() * pRigid->GetMass());
@@ -102,7 +103,7 @@ void PhysicsScene::Draw()
 {
 	for (auto pActor : m_actors)
 	{
-		pActor->Draw();
+		pActor->MakeGizmo();
 	}
 }
 
@@ -116,9 +117,15 @@ bool PhysicsScene::Sphere2Sphere(PhysicsObject* a_sphere, PhysicsObject* a_other
 
 	if (sphere1 != nullptr && sphere2 != nullptr) 
 	{
-		//TODO the maths requiered here :)
+		float dist = glm::distance(sphere1->GetPosition(),sphere2->GetPosition());
+		
+		float penertration = sphere1->GetRadius() + sphere2->GetRadius() - dist;
 
-		//=================================
+		if (penertration > 0) 
+		{
+			return true;
+		}
+			
 	}
 
 	return false;

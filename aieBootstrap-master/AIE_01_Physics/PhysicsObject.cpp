@@ -8,6 +8,3 @@ void PhysicsObject::Debug()
 {
 }
 
-void PhysicsObject::MakeGizmo()
-{
-}

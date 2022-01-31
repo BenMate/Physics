@@ -19,7 +19,7 @@ public:
 		m_Position.y << std::endl; }
 
 
-	virtual bool CheckCollosion(PhysicsObject* pOther) = 0;
+	virtual bool CheckCollision(PhysicsObject* pOther) = 0;
 	void ApplyForce(glm::vec2 a_force);
 	void ApplyForceToActor(RigidBody* a_actor2, glm::vec2 a_force);
 

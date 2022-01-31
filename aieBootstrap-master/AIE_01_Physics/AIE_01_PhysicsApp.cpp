@@ -6,6 +6,7 @@
 #include "Texture.h"
 #include "Font.h"
 #include "Input.h"
+#include "Sphere.h"
 
 AIE_01_PhysicsApp::AIE_01_PhysicsApp() 
 {
@@ -35,6 +36,12 @@ bool AIE_01_PhysicsApp::startup()
 	but it will increase he proccessing time required. if the value is to
 	high it will cause the sim to stutter and reduce the stability. */
 	m_physicsScene->SetTimeStep(0.01f);
+
+
+	m_physicsScene->SetGravity(glm::vec2(0, 0));
+	m_physicsScene->SetTimeStep(0.01f);
+
+	CreateSphere();
 
 	return true;
 }
@@ -80,4 +87,19 @@ void AIE_01_PhysicsApp::draw()
 
 	// done drawing sprites
 	m_2dRenderer->end();
+}
+
+void AIE_01_PhysicsApp::CreateSphere() 
+{
+	Sphere* ball = new Sphere(glm::vec2(-20, 0) ,glm::vec2(0,0), 10.0f, 4.0f,
+		glm::vec4(1, 0, 0, 1));
+
+	Sphere* ball2 = new Sphere(glm::vec2(10, 0), glm::vec2(0, 0), 10.0f, 4.0f,
+		glm::vec4(0, 1, 0, 1));
+
+	m_physicsScene->AddActor(ball);
+	m_physicsScene->AddActor(ball2);
+
+	ball->ApplyForce(glm::vec2(30, 0));
+	ball2->ApplyForce(glm::vec2(-60, 0));
 }

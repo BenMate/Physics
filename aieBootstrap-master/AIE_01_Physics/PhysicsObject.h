@@ -9,7 +9,7 @@
 enum ShapeType
 {
 	PLANE = 0,
-	CIRCLE,
+	SPHERE,
 	AABB,
 };
 
@@ -18,25 +18,25 @@ class PhysicsObject
 
 protected:
 
-	PhysicsObject(ShapeType a_shapeID) : m_shapteID(a_shapeID) {}
+	PhysicsObject(ShapeType a_shapeID) : m_shapeID(a_shapeID) {}
 	
 public:
 
 	virtual void FixedUpdate
 	(glm::vec2 a_gravity, float a_TimeStep) = 0;
 
-	virtual void Draw() = 0;
+	virtual void MakeGizmo() = 0;
 	virtual void ResetPosition() {};
 
 	
 
 	void Update();
 	void Debug();
-	void MakeGizmo();
+	
 
 protected:
 
-	ShapeType m_shapteID;
+	ShapeType m_shapeID;
 
 
 };

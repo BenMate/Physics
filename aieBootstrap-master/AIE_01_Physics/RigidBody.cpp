@@ -11,9 +11,6 @@ RigidBody::RigidBody(ShapeType a_shapeID, glm::vec2 a_position,
 
 }
 
-RigidBody::~RigidBody()
-{
-}
 
 void RigidBody::FixedUpdate(glm::vec2 a_gravity, float a_timeStep)
 {
