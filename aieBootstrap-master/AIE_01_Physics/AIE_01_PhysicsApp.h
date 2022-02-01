@@ -5,6 +5,7 @@
 
 #include "PhysicsScene.h"
 
+class Sphere;
 
 class AIE_01_PhysicsApp : public aie::Application {
 public:
@@ -35,6 +36,9 @@ protected:
 public:
 
 	void CreateSphere();
+	void CreateBeaker();
+
+	void CollisionDetectionTest();
 
 	
 };

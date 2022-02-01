@@ -3,7 +3,6 @@
 #include <glm/glm.hpp>
 
 class PhysicsObject;
-class Sphere;
 
 class PhysicsScene
 {
@@ -35,8 +34,20 @@ public:
 
 	float GetTimeStep() const { return m_TimeStep; }
 
-	static bool Sphere2Sphere(PhysicsObject* a_sphere, 
-		PhysicsObject* a_otherSphere);
+	void CheckForCollisions();
+
+	static bool Plane2Plane(PhysicsObject* a_plane, PhysicsObject* a_otherPlane);
+	static bool Plane2Sphere(PhysicsObject* a_plane, PhysicsObject* a_sphere);
+	static bool Plane2Box(PhysicsObject* a_plane, PhysicsObject* a_box);
+
+	static bool Sphere2Plane(PhysicsObject* a_sphere, PhysicsObject* a_plane);
+	static bool Sphere2Sphere(PhysicsObject* a_sphere, PhysicsObject* a_otherSphere);
+	static bool Sphere2Box(PhysicsObject* a_sphere, PhysicsObject* a_box);
+
+	static bool Box2Plane(PhysicsObject* a_box, PhysicsObject* a_plane);
+	static bool Box2Sphere(PhysicsObject* a_box, PhysicsObject* a_sphere);
+	static bool Box2Box(PhysicsObject* a_box, PhysicsObject* a_otherBox);
+
 
 protected:
 

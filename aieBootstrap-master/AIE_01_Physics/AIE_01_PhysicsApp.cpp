@@ -2,11 +2,13 @@
 #include <Gizmos.h>
 #include <glm/ext.hpp>
 
-#include "AIE_01_PhysicsApp.h"
 #include "Texture.h"
 #include "Font.h"
 #include "Input.h"
+
+#include "AIE_01_PhysicsApp.h"
 #include "Sphere.h"
+#include "Plane.h"
 
 AIE_01_PhysicsApp::AIE_01_PhysicsApp() 
 {
@@ -38,10 +40,12 @@ bool AIE_01_PhysicsApp::startup()
 	m_physicsScene->SetTimeStep(0.01f);
 
 
-	m_physicsScene->SetGravity(glm::vec2(0, -2));
+	m_physicsScene->SetGravity(glm::vec2(0, -9.82f));
 	m_physicsScene->SetTimeStep(0.01f);
 
-	CreateSphere();
+	//CreateSphere();
+	//CreateBeaker();
+	CollisionDetectionTest();
 
 
 	return true;
@@ -68,31 +72,32 @@ void AIE_01_PhysicsApp::update(float deltaTime)
 	if (input->isKeyDown(aie::INPUT_KEY_ESCAPE))
 		quit();
 
-	//create new circles near the rocket to simulate boost every 1 second
+	//create new circles near the rocket to simulate boost every so often
 
 	timer += deltaTime;
-	float mass = m_rocket->GetMass();
+	//float mass = m_rocket->GetMass();
 
-	if (timer > 0.1f && mass > 5.0f)
-	{
-		//creates circle under the rocket
-		auto pos = m_rocket->GetPosition();
-		pos = { pos.x, pos.y };
+	//if (timer > 0.1f && mass > 5.0f)
+	//{
+	//	//creates circle under the rocket
+	//	auto pos = m_rocket->GetPosition();
+	//	pos = { pos.x, pos.y };
 
-		Sphere* boost = new Sphere(glm::vec2(pos.x, pos.y - 15), glm::vec2(0, 0), 0.5f, 3.0f,
-			glm::vec4(0, 1, 0, 1));
+	//	Sphere* boost = new Sphere(glm::vec2(pos.x, pos.y - 15), glm::vec2(0, 0), 0.5f, 3.0f,
+	//		glm::vec4(0, 1, 0, 1));
 
-		m_physicsScene->AddActor(boost);
+	//	//adds boost when rocket is added
+	//	//m_physicsScene->AddActor(boost);
 
-		//makes the rocket add more force each boost
-		boost->ApplyForceToActor(m_rocket, glm::vec2(0, 8));
+	//	////makes the rocket add more force each boost
+	//	boost->ApplyForceToActor(m_rocket, glm::vec2(0, 8));
 
-		//change the mass everytime we boost because we consume fuel
+	//	//change the mass everytime we boost because we consume fuel
 
-		m_rocket->SetMass(mass - 0.5f);
+	//	m_rocket->SetMass(mass - 0.5f);
 
-		timer = 0.0f;
-	}
+	//	timer = 0.0f;
+	//}
 }
 
 void AIE_01_PhysicsApp::draw() 
@@ -108,6 +113,10 @@ void AIE_01_PhysicsApp::draw()
 	aie::Gizmos::draw2D(glm::ortho<float>(-100, 100,
 		-100 / aspectRatio, 100 / aspectRatio, -1.0f, 1.0f));
 
+	char fps[32];
+	sprintf_s(fps, 32, "FPS: %i", getFPS());
+	m_2dRenderer->drawText(m_font, fps, 0, 720 - 32);
+
 	// output some text, uses the last used colour
 	m_2dRenderer->drawText(m_font, "Press ESC to quit", 10, 10);
 
@@ -117,20 +126,63 @@ void AIE_01_PhysicsApp::draw()
 
 void AIE_01_PhysicsApp::CreateSphere() 
 {
-	/*Sphere* ball = new Sphere(glm::vec2(-20, 0) ,glm::vec2(0,0), 10.0f, 4.0f,
+	Sphere* ball = new Sphere(glm::vec2(-20, 0) ,glm::vec2(0,0), 10.0f, 4.0f,
 		glm::vec4(1, 0, 0, 1));
 
 	Sphere* ball2 = new Sphere(glm::vec2(10, 0), glm::vec2(0, 0), 10.0f, 4.0f,
 		glm::vec4(0, 1, 0, 1));
 
-	m_physicsScene->AddActor(ball);
-	m_physicsScene->AddActor(ball2);
+	//adds 2 balls
+	//m_physicsScene->AddActor(ball);
+	//m_physicsScene->AddActor(ball2);
 
 	ball->ApplyForce(glm::vec2(30, 0));
-	ball2->ApplyForce(glm::vec2(-20, 0));*/
+	ball2->ApplyForce(glm::vec2(-20, 0));
 
 	m_rocket = new Sphere(glm::vec2(0, - 40), glm::vec2(0, 0), 25, 10,
 		glm::vec4(1, 0, 1, 1));
 
-	m_physicsScene->AddActor(m_rocket);
+	//adds rocket
+	//m_physicsScene->AddActor(m_rocket);
 }
+
+void AIE_01_PhysicsApp::CreateBeaker()
+{
+
+	auto leftAngle = glm::vec2(1, 1);
+	auto rightAngle = glm::vec2(-1, 1);
+	auto rightWall = glm::vec2(-1, 0);
+	auto bottomWall = glm::vec2(0, 1);
+	auto LeftWall = glm::vec2(1, 0);
+
+	Plane* testPlane  = new Plane(leftAngle,  -20);
+	Plane* testPlane2 = new Plane(rightAngle, -20);
+	Plane* testPlane3 = new Plane(rightWall,  -30);
+	Plane* testPlane4 = new Plane(bottomWall, -30);
+	Plane* testPlane5 = new Plane(LeftWall,   -30);
+
+	m_physicsScene->AddActor(testPlane);
+	m_physicsScene->AddActor(testPlane2);
+	m_physicsScene->AddActor(testPlane3);
+	m_physicsScene->AddActor(testPlane4);
+	m_physicsScene->AddActor(testPlane5);
+
+}
+
+void AIE_01_PhysicsApp::CollisionDetectionTest()
+{
+	Sphere* sphere1 = new Sphere(glm::vec2(-10, 0), glm::vec2(0, 0), 4.0f, 4.0f,
+		glm::vec4(0,0,1,1));
+
+	Sphere* sphere2 = new Sphere(glm::vec2(10, 0), glm::vec2(0, 0), 4.0f, 4.0f,
+		glm::vec4(1, 0, 0, 1));
+
+	Plane* plane = new Plane(glm::vec2(0, 1), -30);
+
+	m_physicsScene->AddActor(sphere1);
+	m_physicsScene->AddActor(sphere2);
+	m_physicsScene->AddActor(plane);
+
+}
+
+

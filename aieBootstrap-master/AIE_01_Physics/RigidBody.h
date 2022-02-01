@@ -32,6 +32,7 @@ public:
 	void SetMass(const float m_mass);
 	
 	
+	
 protected:
 
 	float m_Mass;
