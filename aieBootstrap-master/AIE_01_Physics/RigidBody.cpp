@@ -29,3 +29,9 @@ void RigidBody::ApplyForceToActor(RigidBody* a_actor2, glm::vec2 a_force)
 	ApplyForce(-a_force);
 	a_actor2->ApplyForce(a_force);
 }
+
+void RigidBody::SetMass(const float m_mass)
+{
+	m_Mass = m_mass;
+
+}

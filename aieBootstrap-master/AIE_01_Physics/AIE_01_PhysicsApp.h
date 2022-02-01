@@ -5,8 +5,11 @@
 
 #include "PhysicsScene.h"
 
+
 class AIE_01_PhysicsApp : public aie::Application {
 public:
+
+
 
 	AIE_01_PhysicsApp();
 	virtual ~AIE_01_PhysicsApp();
@@ -24,8 +27,14 @@ protected:
 
 	PhysicsScene* m_physicsScene;
 
+	Sphere* m_rocket;
+
+	float timer = 0.0f;
+
 
 public:
 
 	void CreateSphere();
+
+	
 };

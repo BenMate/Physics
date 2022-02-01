@@ -27,8 +27,10 @@ public:
 	glm::vec2 GetPosition() { return m_Position; }
 	glm::vec2 GetVelocity() { return m_Velocity; }
 	float GetRotation() { return m_Rotation; }
-	float GetMass() { return m_Mass; }
 
+	float GetMass() { return m_Mass; }
+	void SetMass(const float m_mass);
+	
 	
 protected:
 

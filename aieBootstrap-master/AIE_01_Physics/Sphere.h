@@ -20,6 +20,7 @@ public:
 protected:
 
 	float m_Radius;
+
 	glm::vec4 m_colour;
 
 };

@@ -38,10 +38,11 @@ bool AIE_01_PhysicsApp::startup()
 	m_physicsScene->SetTimeStep(0.01f);
 
 
-	m_physicsScene->SetGravity(glm::vec2(0, 0));
+	m_physicsScene->SetGravity(glm::vec2(0, -2));
 	m_physicsScene->SetTimeStep(0.01f);
 
 	CreateSphere();
+
 
 	return true;
 }
@@ -66,11 +67,36 @@ void AIE_01_PhysicsApp::update(float deltaTime)
 	// exit the application
 	if (input->isKeyDown(aie::INPUT_KEY_ESCAPE))
 		quit();
+
+	//create new circles near the rocket to simulate boost every 1 second
+
+	timer += deltaTime;
+	float mass = m_rocket->GetMass();
+
+	if (timer > 0.1f && mass > 5.0f)
+	{
+		//creates circle under the rocket
+		auto pos = m_rocket->GetPosition();
+		pos = { pos.x, pos.y };
+
+		Sphere* boost = new Sphere(glm::vec2(pos.x, pos.y - 15), glm::vec2(0, 0), 0.5f, 3.0f,
+			glm::vec4(0, 1, 0, 1));
+
+		m_physicsScene->AddActor(boost);
+
+		//makes the rocket add more force each boost
+		boost->ApplyForceToActor(m_rocket, glm::vec2(0, 8));
+
+		//change the mass everytime we boost because we consume fuel
+
+		m_rocket->SetMass(mass - 0.5f);
+
+		timer = 0.0f;
+	}
 }
 
 void AIE_01_PhysicsApp::draw() 
 {
-
 	// wipe the screen to the background colour
 	clearScreen();
 
@@ -83,7 +109,7 @@ void AIE_01_PhysicsApp::draw()
 		-100 / aspectRatio, 100 / aspectRatio, -1.0f, 1.0f));
 
 	// output some text, uses the last used colour
-	m_2dRenderer->drawText(m_font, "Press ESC to quit", 0, 10);
+	m_2dRenderer->drawText(m_font, "Press ESC to quit", 10, 10);
 
 	// done drawing sprites
 	m_2dRenderer->end();
@@ -91,7 +117,7 @@ void AIE_01_PhysicsApp::draw()
 
 void AIE_01_PhysicsApp::CreateSphere() 
 {
-	Sphere* ball = new Sphere(glm::vec2(-20, 0) ,glm::vec2(0,0), 10.0f, 4.0f,
+	/*Sphere* ball = new Sphere(glm::vec2(-20, 0) ,glm::vec2(0,0), 10.0f, 4.0f,
 		glm::vec4(1, 0, 0, 1));
 
 	Sphere* ball2 = new Sphere(glm::vec2(10, 0), glm::vec2(0, 0), 10.0f, 4.0f,
@@ -101,5 +127,10 @@ void AIE_01_PhysicsApp::CreateSphere()
 	m_physicsScene->AddActor(ball2);
 
 	ball->ApplyForce(glm::vec2(30, 0));
-	ball2->ApplyForce(glm::vec2(-60, 0));
+	ball2->ApplyForce(glm::vec2(-20, 0));*/
+
+	m_rocket = new Sphere(glm::vec2(0, - 40), glm::vec2(0, 0), 25, 10,
+		glm::vec4(1, 0, 1, 1));
+
+	m_physicsScene->AddActor(m_rocket);
 }
