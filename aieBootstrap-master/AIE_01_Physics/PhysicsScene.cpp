@@ -163,7 +163,8 @@ bool PhysicsScene::Sphere2Sphere(PhysicsObject* a_sphere, PhysicsObject* a_other
 
 		if (penertration > 0) 
 		{
-			sphere1->ResolveCollision(sphere2);
+			sphere1->ResolveCollision(sphere2,0.5f * 
+				(sphere1->GetPosition() + sphere2->GetPosition()));
 			return true;
 		}
 	}

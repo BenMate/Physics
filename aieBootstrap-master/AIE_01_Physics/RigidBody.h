@@ -21,7 +21,9 @@ public:
 		m_Position.y << std::endl; }
 
 
-	void ResolveCollision(RigidBody* a_actor2);
+	void ResolveCollision(RigidBody* a_otherActor, glm::vec2 a_contact,
+		glm::vec2* a_collisionNormal = nullptr);
+
 	virtual bool CheckCollision(PhysicsObject* pOther) = 0;
 
 	void ApplyForce(glm::vec2 a_force, glm::vec2 a_contact);

@@ -1,0 +1,62 @@
+planes act normally as immovable wall... eg floor or walls... unity use them as static images.
+
+
+becuase we know the plane is static (immovable)
+- we only need to apply calcuated impuse to the sphere
+
+
+example
+
+
+
+
+
+sphere
+
+- velocity (3, -10)
+
+
+plane
+-normal (-0.65, 0.75)
+
+elasticity 1
+
+
+
+
+v'a = va = - (1+e) va . n * n
+
+v'a = (3, -10) - (1 + 1) x  (3, -10) . (-0.65, 0.75) *  (-0.65, 0.75)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -130,6 +130,9 @@ void AIE_01_PhysicsApp::CreateSphere()
 	m_rocket = new Sphere(glm::vec2(0, -40), glm::vec2(0, 0), 25, 10,
 		glm::vec4(1, 0, 1, 1));
 
+	//adds rocket
+	//m_physicsScene->AddActor(m_rocket);
+
 	Sphere* ball = new Sphere(glm::vec2(-20, 0) ,glm::vec2(0,0), 1.7f, 4.0f,
 		glm::vec4(1, 1, 1, 1));
 	Sphere* ball2 = new Sphere(glm::vec2(10, 0), glm::vec2(0, 0), 1.6f, 4.0f,
@@ -139,10 +142,13 @@ void AIE_01_PhysicsApp::CreateSphere()
 	m_physicsScene->AddActor(ball);
 	m_physicsScene->AddActor(ball2);
 
-	ball->ApplyForce(glm::vec2(200.f, 0), ball->GetPosition());
-	//ball2->ApplyForce(glm::vec2(-20, 0));
-	//adds rocket
-	//m_physicsScene->AddActor(m_rocket);
+	ball->ApplyForce(glm::vec2(20.f, -20.0f), ball->GetPosition());
+	ball2->ApplyForce(glm::vec2(-20, -20.0f), ball2->GetPosition());
+
+	Plane* plane = new Plane(glm::vec2(0, 1), - 30);
+	m_physicsScene->AddActor(plane);
+
+	
 }
 
 void AIE_01_PhysicsApp::CreateBeaker()
