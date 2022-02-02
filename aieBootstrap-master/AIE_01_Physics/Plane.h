@@ -4,7 +4,7 @@
 // considered to extend infiniatly along both sides of its edge
 // and backwards from its normal direction
 
-
+class RigidBody;
 
 class Plane : public PhysicsObject
 {
@@ -18,6 +18,9 @@ public:
 	virtual void MakeGizmo();
 	virtual void Debug() {};
 	virtual void ResetPosition() {};
+
+	void ResolvePlaneCollision(RigidBody* a_rigidbody,
+		glm::vec2(a_contact));
 
 	glm::vec2 GetNormal() { return m_normal; }
 	float GetDistance() { return m_distanceToOrigin; }

@@ -130,15 +130,16 @@ bool PhysicsScene::Sphere2Plane(PhysicsObject* a_sphere, PhysicsObject* a_plane)
 	if (sphere != nullptr && plane != nullptr) 
 	{
 		glm::vec2 collisionNormal = plane->GetNormal();
-		float sphereToPlane = glm::dot(sphere->GetPosition(),plane->GetNormal() - 
-			plane->GetDistance());
+
+		float sphereToPlane = glm::dot(sphere->GetPosition(), plane->GetNormal()) - plane->GetDistance();
+
 		float intersection = sphere->GetRadius() - sphereToPlane;
 		float velocityOutofThePlane = glm::dot(sphere->GetVelocity(), plane->GetNormal());
 
 		if (intersection > 0 && velocityOutofThePlane < 0)
 		{
 			//we can set the spheres responce
-			sphere->ApplyForce(-sphere->GetVelocity() * sphere->GetMass());
+			sphere->ApplyForce(-sphere->GetVelocity() * sphere->GetMass(), sphere->GetPosition());
 			return true;
 		}
 	}
@@ -153,7 +154,6 @@ bool PhysicsScene::Sphere2Sphere(PhysicsObject* a_sphere, PhysicsObject* a_other
 	Sphere* sphere2 = dynamic_cast<Sphere*>(a_otherSphere);
 
 	//if susscessful then test cor collision
-
 	if (sphere1 != nullptr && sphere2 != nullptr) 
 	{
 		//do the maths to check for the overlap
@@ -163,6 +163,7 @@ bool PhysicsScene::Sphere2Sphere(PhysicsObject* a_sphere, PhysicsObject* a_other
 
 		if (penertration > 0) 
 		{
+			sphere1->ResolveCollision(sphere2);
 			return true;
 		}
 	}

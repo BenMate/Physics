@@ -40,12 +40,12 @@ bool AIE_01_PhysicsApp::startup()
 	m_physicsScene->SetTimeStep(0.01f);
 
 
-	m_physicsScene->SetGravity(glm::vec2(0, -9.82f));
+	m_physicsScene->SetGravity(glm::vec2(0, 0));
 	m_physicsScene->SetTimeStep(0.01f);
 
-	//CreateSphere();
+	CreateSphere();
 	//CreateBeaker();
-	CollisionDetectionTest();
+	//CollisionDetectionTest();
 
 
 	return true;
@@ -72,9 +72,10 @@ void AIE_01_PhysicsApp::update(float deltaTime)
 	if (input->isKeyDown(aie::INPUT_KEY_ESCAPE))
 		quit();
 
-	//create new circles near the rocket to simulate boost every so often
 
-	timer += deltaTime;
+	/*create new circles near the rocket to simulate boost every so often
+
+	//timer += deltaTime;
 	//float mass = m_rocket->GetMass();
 
 	//if (timer > 0.1f && mass > 5.0f)
@@ -97,7 +98,7 @@ void AIE_01_PhysicsApp::update(float deltaTime)
 	//	m_rocket->SetMass(mass - 0.5f);
 
 	//	timer = 0.0f;
-	//}
+	} */
 }
 
 void AIE_01_PhysicsApp::draw() 
@@ -126,22 +127,20 @@ void AIE_01_PhysicsApp::draw()
 
 void AIE_01_PhysicsApp::CreateSphere() 
 {
-	Sphere* ball = new Sphere(glm::vec2(-20, 0) ,glm::vec2(0,0), 10.0f, 4.0f,
-		glm::vec4(1, 0, 0, 1));
+	m_rocket = new Sphere(glm::vec2(0, -40), glm::vec2(0, 0), 25, 10,
+		glm::vec4(1, 0, 1, 1));
 
-	Sphere* ball2 = new Sphere(glm::vec2(10, 0), glm::vec2(0, 0), 10.0f, 4.0f,
+	Sphere* ball = new Sphere(glm::vec2(-20, 0) ,glm::vec2(0,0), 1.7f, 4.0f,
+		glm::vec4(1, 1, 1, 1));
+	Sphere* ball2 = new Sphere(glm::vec2(10, 0), glm::vec2(0, 0), 1.6f, 4.0f,
 		glm::vec4(0, 1, 0, 1));
 
 	//adds 2 balls
-	//m_physicsScene->AddActor(ball);
-	//m_physicsScene->AddActor(ball2);
+	m_physicsScene->AddActor(ball);
+	m_physicsScene->AddActor(ball2);
 
-	ball->ApplyForce(glm::vec2(30, 0));
-	ball2->ApplyForce(glm::vec2(-20, 0));
-
-	m_rocket = new Sphere(glm::vec2(0, - 40), glm::vec2(0, 0), 25, 10,
-		glm::vec4(1, 0, 1, 1));
-
+	ball->ApplyForce(glm::vec2(200.f, 0), ball->GetPosition());
+	//ball2->ApplyForce(glm::vec2(-20, 0));
 	//adds rocket
 	//m_physicsScene->AddActor(m_rocket);
 }

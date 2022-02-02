@@ -7,10 +7,12 @@ Sphere::Sphere(glm::vec2 a_position, glm::vec2 a_velocity,
 {
 	m_Radius = a_radius;
 	m_colour = a_colour;
+	m_isKinematic = false;
 }
 
 Sphere::~Sphere()
 {
+	
 }
 
 void Sphere::MakeGizmo()
