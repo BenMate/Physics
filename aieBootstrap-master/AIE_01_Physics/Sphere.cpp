@@ -1,5 +1,6 @@
 #include "Sphere.h"
 #include <Gizmos.h>
+#include <glm/ext.hpp>
 
 Sphere::Sphere(glm::vec2 a_position, glm::vec2 a_velocity,
  float a_mass, float a_radius, glm::vec4 a_colour) : 
@@ -18,7 +19,12 @@ Sphere::~Sphere()
 
 void Sphere::MakeGizmo()
 {
+	glm::vec2 end = glm::vec2(std::cos(m_Rotation),
+		std::sin(m_Rotation)) * m_Radius;
+
 	aie::Gizmos::add2DCircle(m_Position, m_Radius, 12, m_colour);
+
+	aie::Gizmos::add2DLine(m_Position, m_Position + end, glm::vec4(1, 1, 1, 1));
 }
 
 bool Sphere::CheckCollision(PhysicsObject* a_pOther)

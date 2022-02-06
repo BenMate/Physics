@@ -39,13 +39,15 @@ bool AIE_01_PhysicsApp::startup()
 	high it will cause the sim to stutter and reduce the stability. */
 	m_physicsScene->SetTimeStep(0.01f);
 
-
 	m_physicsScene->SetGravity(glm::vec2(0, 0));
-	m_physicsScene->SetTimeStep(0.01f);
+	;
+
+	//CollisionDetectionTest();
 
 	CreateSphere();
 	//CreateBeaker();
-	//CollisionDetectionTest();
+	
+	//CreateRocket
 
 
 	return true;
@@ -53,9 +55,9 @@ bool AIE_01_PhysicsApp::startup()
 
 void AIE_01_PhysicsApp::shutdown() 
 {
-
 	delete m_font;
 	delete m_2dRenderer;
+
 }
 
 void AIE_01_PhysicsApp::update(float deltaTime) 
@@ -72,33 +74,10 @@ void AIE_01_PhysicsApp::update(float deltaTime)
 	if (input->isKeyDown(aie::INPUT_KEY_ESCAPE))
 		quit();
 
+	//UpdateRocket(deltaTime);
+	
 
-	/*create new circles near the rocket to simulate boost every so often
 
-	//timer += deltaTime;
-	//float mass = m_rocket->GetMass();
-
-	//if (timer > 0.1f && mass > 5.0f)
-	//{
-	//	//creates circle under the rocket
-	//	auto pos = m_rocket->GetPosition();
-	//	pos = { pos.x, pos.y };
-
-	//	Sphere* boost = new Sphere(glm::vec2(pos.x, pos.y - 15), glm::vec2(0, 0), 0.5f, 3.0f,
-	//		glm::vec4(0, 1, 0, 1));
-
-	//	//adds boost when rocket is added
-	//	//m_physicsScene->AddActor(boost);
-
-	//	////makes the rocket add more force each boost
-	//	boost->ApplyForceToActor(m_rocket, glm::vec2(0, 8));
-
-	//	//change the mass everytime we boost because we consume fuel
-
-	//	m_rocket->SetMass(mass - 0.5f);
-
-	//	timer = 0.0f;
-	} */
 }
 
 void AIE_01_PhysicsApp::draw() 
@@ -127,12 +106,6 @@ void AIE_01_PhysicsApp::draw()
 
 void AIE_01_PhysicsApp::CreateSphere() 
 {
-	m_rocket = new Sphere(glm::vec2(0, -40), glm::vec2(0, 0), 25, 10,
-		glm::vec4(1, 0, 1, 1));
-
-	//adds rocket
-	//m_physicsScene->AddActor(m_rocket);
-
 	Sphere* ball = new Sphere(glm::vec2(-20, 0) ,glm::vec2(0,0), 1.7f, 4.0f,
 		glm::vec4(1, 1, 1, 1));
 	Sphere* ball2 = new Sphere(glm::vec2(10, 0), glm::vec2(0, 0), 1.6f, 4.0f,
@@ -148,7 +121,7 @@ void AIE_01_PhysicsApp::CreateSphere()
 	Plane* plane = new Plane(glm::vec2(0, 1), - 30);
 	m_physicsScene->AddActor(plane);
 
-	
+
 }
 
 void AIE_01_PhysicsApp::CreateBeaker()
@@ -188,6 +161,47 @@ void AIE_01_PhysicsApp::CollisionDetectionTest()
 	m_physicsScene->AddActor(sphere2);
 	m_physicsScene->AddActor(plane);
 
+}
+
+void AIE_01_PhysicsApp::CreateRocket()
+{
+	m_rocket = new Sphere(glm::vec2(0, -40), glm::vec2(0, 0), 25, 10,
+		glm::vec4(1, 0, 1, 1));
+
+	//adds rocket
+	m_physicsScene->AddActor(m_rocket);
+}
+
+void AIE_01_PhysicsApp::UpdateRocket(float deltaTime)
+{
+	//create new circles near the rocket to simulate boost every so often
+
+	timer += deltaTime;
+	float mass = m_rocket->GetMass();
+
+	if (timer > 0.1f && mass > 5.0f)
+	{
+		//creates circle under the rocket
+		auto pos = m_rocket->GetPosition();
+		pos = { pos.x, pos.y };
+
+		Sphere* boost = new Sphere(glm::vec2(pos.x, pos.y - 15), glm::vec2(0, 0), 0.5f, 3.0f,
+			glm::vec4(0, 1, 0, 1));
+
+		//adds boost when rocket is added
+		m_physicsScene->AddActor(boost);
+
+		//makes the rocket add more force each boost
+		//boost->ApplyForceToActor(m_rocket, glm::vec2(0, 8));
+		
+		boost->ApplyForce(glm::vec2(0, -8.0f), m_rocket->GetPosition());
+
+		//change the mass everytime we boost because we consume fuel
+
+		m_rocket->SetMass(mass - 0.5f);
+
+		timer = 0.0f;
+	} 
 }
 
 

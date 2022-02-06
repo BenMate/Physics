@@ -138,8 +138,10 @@ bool PhysicsScene::Sphere2Plane(PhysicsObject* a_sphere, PhysicsObject* a_plane)
 
 		if (intersection > 0 && velocityOutofThePlane < 0)
 		{
-			//we can set the spheres responce
-			sphere->ApplyForce(-sphere->GetVelocity() * sphere->GetMass(), sphere->GetPosition());
+			//we can set object to respond to a plane collision
+
+			glm::vec2 contact = sphere->GetPosition() + (collisionNormal * -sphere->GetRadius());
+			plane->ResolvePlaneCollision(sphere, contact);
 			return true;
 		}
 	}

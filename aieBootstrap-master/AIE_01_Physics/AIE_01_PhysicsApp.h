@@ -37,8 +37,9 @@ public:
 
 	void CreateSphere();
 	void CreateBeaker();
-
+	void CreateRocket();
 	void CollisionDetectionTest();
 
+	void UpdateRocket(float deltaTime);
 	
 };
