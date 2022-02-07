@@ -11,8 +11,6 @@ RigidBody::RigidBody(ShapeType a_shapeID, glm::vec2 a_position,
 	m_Mass = a_mass;
 	m_elasticity = 1;
 	m_anglurVelocity = 0;
-
-
 }
 
 
@@ -25,7 +23,7 @@ void RigidBody::FixedUpdate(glm::vec2 a_gravity, float a_timeStep)
 }
 
 void RigidBody::ResolveCollision(RigidBody* a_otherActor, glm::vec2 a_contact,
-	glm::vec2* a_collisionNormal)
+	glm::vec2* a_collisionNormal, float a_pen)
 {
 	//we need to find the vector between their 
 	//centers or use the provided directional force
@@ -68,13 +66,6 @@ void RigidBody::ApplyForce(glm::vec2 a_force, glm::vec2 a_contact)
 	m_anglurVelocity += (a_force.y * a_contact.x - a_force.x * a_contact.y) / GetMoment();
 
 }
-
-//void RigidBody::ApplyForceToActor(RigidBody* a_actor2, glm::vec2 a_force, glm::vec2 a_contact)
-//{
-//
-//	ApplyForce(-a_force, a_contact);
-//	a_actor2->ApplyForce(a_force, a_contact);
-//}
 
 void RigidBody::SetMass(const float m_mass)
 {

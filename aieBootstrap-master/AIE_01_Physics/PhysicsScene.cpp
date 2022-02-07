@@ -1,5 +1,7 @@
 #include <list>
 #include <iostream>
+#include <algorithm>
+#include <glm/ext.hpp>
 
 #include "PhysicsScene.h"
 #include "PhysicsObject.h"
@@ -116,6 +118,58 @@ bool PhysicsScene::Plane2Sphere(PhysicsObject* a_plane, PhysicsObject* a_sphere)
 
 bool PhysicsScene::Plane2Box(PhysicsObject* a_plane, PhysicsObject* a_box)
 {
+	Plane* plane = dynamic_cast <Plane*>(a_plane);
+	Box* box = dynamic_cast<Box*>(a_box);
+
+	//when the argument return true start the collision test
+	if (box != nullptr && plane != nullptr) 
+	{
+		int numContacts = 0;
+		glm::vec2 contact(0, 0);
+
+		float contactVel = 0;
+
+		glm::vec2 planeOrigin = plane->GetNormal() * plane->GetDistance();
+
+		//check all four corners of the box for any have touced the
+		//plane
+
+		for (float x = -box->GetExtents().x; x < box->GetWidth(); x+= box->GetWidth())
+		{
+			for (float y = -box->GetExtents().y; y < box->GetHieght(); y += box->GetHieght())
+			{
+				//next, grab the poition of the corner in world space
+				glm::vec2 p = box->GetPosition() + x * box->GetLocalX() + y * box->GetLocalY();
+				float distanceFromPlane = glm::dot(p - planeOrigin, plane->GetNormal());
+
+				//this is the total velcoity of the box's points in the world space
+				glm::vec2 displacement = x * box->GetLocalX() + y * box->GetLocalY();
+				glm::vec2 pointVelocity = box->GetVelocity() + box->GetAngularVelocity()
+					* glm::vec2(-displacement.y, displacement.x);
+
+				//this s the component of th point velocity into the plane
+				float velocityIntoPlane = glm::dot(pointVelocity, plane->GetNormal());
+
+				//while our box is penatrating the plane .....
+				if (distanceFromPlane < 0 && velocityIntoPlane <= 0) 
+				{
+					numContacts++;
+					contact += p;
+					contactVel += velocityIntoPlane;
+				}
+			}
+		}
+
+		//we have a hit if greater then 0, typically only 1 to 2 corners will colide
+		if (numContacts > 0) 
+		{
+			//TODO: account for 1 or 2 corners overlapping
+			plane->ResolvePlaneCollision(box, contact / (float) numContacts);
+
+
+			return true;
+		}
+	}
 	return false;
 }
 
@@ -175,16 +229,65 @@ bool PhysicsScene::Sphere2Sphere(PhysicsObject* a_sphere, PhysicsObject* a_other
 
 bool PhysicsScene::Sphere2Box(PhysicsObject* a_sphere, PhysicsObject* a_box)
 {
-	return false;
+	return Box2Sphere(a_box, a_sphere);
 }
 
 bool PhysicsScene::Box2Plane(PhysicsObject* a_box, PhysicsObject* a_plane)
 {
-	return false;
+	return Plane2Box(a_plane, a_box);
 }
 
 bool PhysicsScene::Box2Sphere(PhysicsObject* a_box, PhysicsObject* a_sphere)
 {
+	Sphere* sphere = dynamic_cast<Sphere*>(a_sphere);
+	Box* box = dynamic_cast<Box*>(a_box);
+
+	if (box != nullptr && sphere != nullptr) 
+	{
+		//transform the sphere into the box's coordinate space
+		glm::vec2 sphereWorldPos = sphere->GetPosition() - box->GetPosition();
+		glm::vec2 sphereBoxPos = glm::vec2(glm::dot(sphereWorldPos, box->GetLocalX()),
+			glm::dot(sphereBoxPos, box->GetLocalY()));
+
+		//then find the closest point to the circle center on the box,
+		//do this by clamping the coordinates in box space to the 
+		//box's extents
+
+		glm::vec2 closestPointOnTheBox = sphereBoxPos;
+		glm::vec2 extents = box->GetExtents();
+
+		if (closestPointOnTheBox.x < -extents.x)
+			closestPointOnTheBox.x = -extents.x;
+
+		if (closestPointOnTheBox.x > extents.x)
+			closestPointOnTheBox.x = extents.x;
+
+		if (closestPointOnTheBox.y < -extents.y)
+			closestPointOnTheBox.y = -extents.y;
+
+		if (closestPointOnTheBox.y > extents.y)
+			closestPointOnTheBox.y = extents.y;
+		
+		//Finally, convert back to world coordinates
+		//fun thing to test swap the x and y around
+
+		glm::vec2 closestPointInBoxWorld = box->GetPosition() + closestPointOnTheBox.x * 
+			box->GetLocalX() + closestPointOnTheBox.y * box->GetLocalY();
+
+		glm::vec2 sphereToBox = sphere->GetPosition() - closestPointInBoxWorld;
+
+		float penertration = sphere->GetRadius() - glm::length(sphereToBox);
+
+		if (penertration > 0)
+		{
+			glm::vec2 direction = glm::normalize(sphereToBox);
+			glm::vec2 contact = closestPointInBoxWorld;
+			box->ResolveCollision(sphere, contact, &direction);
+			return true;
+		}
+
+	}
+
 	return false;
 }
 

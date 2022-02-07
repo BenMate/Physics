@@ -9,6 +9,8 @@
 #include "AIE_01_PhysicsApp.h"
 #include "Sphere.h"
 #include "Plane.h"
+#include "Box.h"
+#include "Player.h"
 
 AIE_01_PhysicsApp::AIE_01_PhysicsApp() 
 {
@@ -39,16 +41,19 @@ bool AIE_01_PhysicsApp::startup()
 	high it will cause the sim to stutter and reduce the stability. */
 	m_physicsScene->SetTimeStep(0.01f);
 
-	m_physicsScene->SetGravity(glm::vec2(0, 0));
-	;
+	m_physicsScene->SetGravity(glm::vec2(0, -3));
+
+	//CreateSphere();
+	//CreateBeaker();	
+	//CreateRocket();
+	RotationRest();
 
 	//CollisionDetectionTest();
 
-	CreateSphere();
-	//CreateBeaker();
-	
-	//CreateRocket
+	m_player  = new Player (glm::vec2(-20, 0), glm::vec2(0, 0), 1.7f, 4.0f,
+		glm::vec4(1, 1, 1, 1));
 
+	m_physicsScene->AddActor(m_player);
 
 	return true;
 }
@@ -60,7 +65,7 @@ void AIE_01_PhysicsApp::shutdown()
 
 }
 
-void AIE_01_PhysicsApp::update(float deltaTime) 
+void AIE_01_PhysicsApp::update(float deltaTime)
 {
 	// input example
 	aie::Input* input = aie::Input::getInstance();
@@ -75,9 +80,8 @@ void AIE_01_PhysicsApp::update(float deltaTime)
 		quit();
 
 	//UpdateRocket(deltaTime);
-	
 
-
+	m_player->UpdateInput(deltaTime, input);
 }
 
 void AIE_01_PhysicsApp::draw() 
@@ -120,7 +124,6 @@ void AIE_01_PhysicsApp::CreateSphere()
 
 	Plane* plane = new Plane(glm::vec2(0, 1), - 30);
 	m_physicsScene->AddActor(plane);
-
 
 }
 
@@ -172,6 +175,25 @@ void AIE_01_PhysicsApp::CreateRocket()
 	m_physicsScene->AddActor(m_rocket);
 }
 
+void AIE_01_PhysicsApp::RotationRest()
+{
+
+	//plane
+	Plane* plane = new Plane(glm::vec2(0, 1), -30);
+	m_physicsScene->AddActor(plane);
+
+	//ball green
+	Sphere* ball3 = new Sphere(glm::vec2(20, 20), glm::vec2(0, 0), 1.7f, 4.0f,
+		glm::vec4(0, 1, 0, 1));
+	m_physicsScene->AddActor(ball3);
+	ball3->ApplyForce(glm::vec2(0.0f, -20.0f), ball3->GetPosition());
+
+	//box 
+	Box* box1 = new Box(glm::vec2(20, 0), glm::vec2(0, 1), 0, 4, 8, 4);
+	m_physicsScene->AddActor(box1);
+	box1->ApplyForce(glm::vec2(0.0f, -20.f), box1->GetPosition());
+}
+
 void AIE_01_PhysicsApp::UpdateRocket(float deltaTime)
 {
 	//create new circles near the rocket to simulate boost every so often
@@ -203,5 +225,9 @@ void AIE_01_PhysicsApp::UpdateRocket(float deltaTime)
 		timer = 0.0f;
 	} 
 }
+
+
+
+
 
 

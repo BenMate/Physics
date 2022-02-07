@@ -2,10 +2,10 @@
 
 #include "Application.h"
 #include "Renderer2D.h"
-
 #include "PhysicsScene.h"
 
 class Sphere;
+class Player;
 
 class AIE_01_PhysicsApp : public aie::Application {
 public:
@@ -30,6 +30,8 @@ protected:
 
 	Sphere* m_rocket;
 
+	Player* m_player;
+
 	float timer = 0.0f;
 
 
@@ -38,8 +40,12 @@ public:
 	void CreateSphere();
 	void CreateBeaker();
 	void CreateRocket();
+
 	void CollisionDetectionTest();
 
+	void RotationRest();
 	void UpdateRocket(float deltaTime);
+
 	
+
 };

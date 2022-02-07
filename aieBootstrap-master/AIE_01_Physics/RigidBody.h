@@ -22,15 +22,12 @@ public:
 
 
 	void ResolveCollision(RigidBody* a_otherActor, glm::vec2 a_contact,
-		glm::vec2* a_collisionNormal = nullptr);
+		glm::vec2* a_collisionNormal = nullptr, float a_pen = 0);
 
-	virtual bool CheckCollision(PhysicsObject* pOther) = 0;
+	//virtual bool CheckCollision(PhysicsObject* pOther) = 0;
 
 	void ApplyForce(glm::vec2 a_force, glm::vec2 a_contact);
-	//void ApplyForceToActor(RigidBody* a_actor2, glm::vec2 a_force, 
-	//	glm::vec2 a_contact);
-
-
+	
 	glm::vec2 GetPosition() { return m_Position; }
 	glm::vec2 GetVelocity() { return m_Velocity; }
 	float GetRotation() { return m_Rotation; }
@@ -39,7 +36,7 @@ public:
 	void SetMass(const float m_mass);
 
 	float GetAngularVelocity() { return m_anglurVelocity; }
-	float GetMoment() { return m_moment; }
+	float GetMoment() { return m_isKinematic ? INT_MAX : m_moment; }
 	bool GetIsKinamatic() { return m_isKinematic; }
 	
 	float GetKineticEnergy();
