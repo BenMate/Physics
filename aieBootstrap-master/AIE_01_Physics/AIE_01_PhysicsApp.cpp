@@ -41,14 +41,15 @@ bool AIE_01_PhysicsApp::startup()
 	high it will cause the sim to stutter and reduce the stability. */
 	m_physicsScene->SetTimeStep(0.01f);
 
-	m_physicsScene->SetGravity(glm::vec2(0, -3));
+	m_physicsScene->SetGravity(glm::vec2(0, -9));
 
 	//CreateSphere();
 	//CreateBeaker();	
 	//CreateRocket();
-	RotationRest();
+	//RotationRest();
 
 	//CollisionDetectionTest();
+	ElasticityTest();
 
 	m_player  = new Player (glm::vec2(-20, 0), glm::vec2(0, 0), 1.7f, 4.0f,
 		glm::vec4(1, 1, 1, 1));
@@ -177,13 +178,12 @@ void AIE_01_PhysicsApp::CreateRocket()
 
 void AIE_01_PhysicsApp::RotationRest()
 {
-
 	//plane
 	Plane* plane = new Plane(glm::vec2(0, 1), -30);
 	m_physicsScene->AddActor(plane);
 
 	//ball green
-	Sphere* ball3 = new Sphere(glm::vec2(20, 20), glm::vec2(0, 0), 1.7f, 4.0f,
+	Sphere* ball3 = new Sphere(glm::vec2(20, 30), glm::vec2(0, 0), 1.7f, 4.0f,
 		glm::vec4(0, 1, 0, 1));
 	m_physicsScene->AddActor(ball3);
 	ball3->ApplyForce(glm::vec2(0.0f, -20.0f), ball3->GetPosition());
@@ -191,7 +191,12 @@ void AIE_01_PhysicsApp::RotationRest()
 	//box 
 	Box* box1 = new Box(glm::vec2(20, 0), glm::vec2(0, 1), 0, 4, 8, 4);
 	m_physicsScene->AddActor(box1);
-	box1->ApplyForce(glm::vec2(0.0f, -20.f), box1->GetPosition());
+	box1->ApplyForce(glm::vec2(0.0f, -40.f), box1->GetPosition());
+
+	//box 2
+	Box* box2 = new Box(glm::vec2(20, -10), glm::vec2(0, 1), 45, 4, 8, 4);
+	m_physicsScene->AddActor(box2);
+	box2->ApplyForce(glm::vec2(0.0f, -20.f), box2->GetPosition());
 }
 
 void AIE_01_PhysicsApp::UpdateRocket(float deltaTime)
@@ -224,6 +229,46 @@ void AIE_01_PhysicsApp::UpdateRocket(float deltaTime)
 
 		timer = 0.0f;
 	} 
+}
+
+void AIE_01_PhysicsApp::ElasticityTest()
+{
+	//plane
+	Plane* plane = new Plane(glm::vec2(0, 1), -30);
+	m_physicsScene->AddActor(plane);
+
+	//ball green bouncy
+	Sphere* ball3 = new Sphere(glm::vec2(50, 30), glm::vec2(0, 0), 1.7f, 4.0f,
+		glm::vec4(0, 1, 0, 1));
+
+	m_physicsScene->AddActor(ball3);
+	ball3->SetElasticity(0.7f);
+	ball3->ApplyForce(glm::vec2(0.0f, -20.0f), ball3->GetPosition());
+
+	//box big blue not bouncy
+	Box* box1 = new Box(glm::vec2(20, 0), glm::vec2(0, 1), 0, 4, 20, 20);
+
+	m_physicsScene->AddActor(box1);
+	box1->SetElasticity(0.1f);
+	box1->ApplyForce(glm::vec2(0.0f, -40.f), box1->GetPosition());
+
+	//ball green2 bouncy
+	Sphere* ball = new Sphere(glm::vec2(20, 30), glm::vec2(0, 0), 1.7f, 4.0f,
+		glm::vec4(0, 1, 0, 1));
+
+	m_physicsScene->AddActor(ball);
+	ball->SetElasticity(0.7f);
+	ball->ApplyForce(glm::vec2(0.0f, -20.0f), ball3->GetPosition());
+
+	//box bouncy red
+	Box* box2 = new Box(glm::vec2(50, 0), glm::vec2(0, 1), 0, 4, 20, 20, 
+		glm::vec4(1,0,0,1));
+
+	m_physicsScene->AddActor(box2);
+	box2->SetElasticity(0.9f);
+	box2->ApplyForce(glm::vec2(0.0f, -40.f), box2->GetPosition());
+
+
 }
 
 

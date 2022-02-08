@@ -46,6 +46,7 @@ public:
 	void RotationRest();
 	void UpdateRocket(float deltaTime);
 
+	void ElasticityTest();
 	
 
 };

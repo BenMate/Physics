@@ -22,9 +22,9 @@ void Sphere::MakeGizmo()
 	glm::vec2 end = glm::vec2(std::cos(m_Rotation),
 		std::sin(m_Rotation)) * m_Radius;
 
-	aie::Gizmos::add2DCircle(m_Position, m_Radius, 12, m_colour);
+	aie::Gizmos::add2DCircle(m_Position, m_Radius, 15, m_colour);
 
-	aie::Gizmos::add2DLine(m_Position, m_Position + end, glm::vec4(1, 1, 1, 1));
+	aie::Gizmos::add2DLine(m_Position, m_Position + end, glm::vec4(0, 0, 0, 0));
 }
 
 bool Sphere::CheckCollision(PhysicsObject* a_pOther)

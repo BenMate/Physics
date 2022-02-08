@@ -64,11 +64,10 @@ void Plane::ResolvePlaneCollision(RigidBody* a_rigidbody, glm::vec2(a_contact))
 	//velocity is just the Rigidbody's velocity at the contact point
 	glm::vec2 vRel = a_rigidbody->GetVelocity() + a_rigidbody->GetAngularVelocity() 
 		* glm::vec2(localContact.y, localContact.x);
-
 	float velocityIntoPlane = glm::dot(vRel, m_normal);
 
-	// Perfect Elasticitycolission [ToBeUpdated]
-	float e = 1;
+	// average the elasticty of the plane and the rigidbody
+	float e = (GetElasticity() / a_rigidbody->GetElasticity());
 
 	// Find the perpendiculer distance so we can apply force at the 
 	// relative center of mass, torque = F*r
@@ -87,10 +86,5 @@ void Plane::ResolvePlaneCollision(RigidBody* a_rigidbody, glm::vec2(a_contact))
 	glm::vec2 force = m_normal * j;
 
 	a_rigidbody->ApplyForce(force, a_contact - a_rigidbody->GetPosition());
-
 }
 
-void Plane::SetColour()
-{
-
-}

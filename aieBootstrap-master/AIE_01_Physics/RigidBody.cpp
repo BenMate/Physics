@@ -11,15 +11,30 @@ RigidBody::RigidBody(ShapeType a_shapeID, glm::vec2 a_position,
 	m_Mass = a_mass;
 	m_elasticity = 1;
 	m_anglurVelocity = 0;
+
+	m_linearDrag = 0.3f;
+	m_angularDrag = 0.3f;
 }
 
 
 void RigidBody::FixedUpdate(glm::vec2 a_gravity, float a_timeStep)
 {
+	
+
+	m_Velocity -= m_Velocity * m_linearDrag * a_timeStep;
+	m_anglurVelocity -= m_anglurVelocity * m_angularDrag * a_timeStep;
+
 	m_Position += GetVelocity() * a_timeStep;
 	ApplyForce(a_gravity * GetMass() * a_timeStep, glm::vec2(0,0));
 
 	m_Rotation += m_anglurVelocity * a_timeStep;
+
+	if (glm::length(m_Velocity) < MIN_LINEAR_THRESHOLD)
+		m_Velocity = glm::vec2(0, 0);
+
+	if (glm::abs(m_anglurVelocity) < MIN_ANGULAR_THRESHOLD)
+		m_anglurVelocity = 0;
+	
 }
 
 void RigidBody::ResolveCollision(RigidBody* a_otherActor, glm::vec2 a_contact,
@@ -75,7 +90,16 @@ void RigidBody::SetMass(const float m_mass)
 
 float RigidBody::GetKineticEnergy()
 {
-	float totalEnergy = (m_Mass * glm::dot(m_Velocity, m_Velocity)) / 2;
+	return 0.5f * (m_Mass * glm::dot(m_Velocity, m_Velocity) +
+		m_moment * m_anglurVelocity * m_anglurVelocity);
+}
 
-	return totalEnergy;
+void RigidBody::SetLinearDrag(const float a_linearDrag)
+{
+	m_linearDrag = a_linearDrag;
+}
+
+void RigidBody::SetAngularDrag(const float a_angulerDrag)
+{
+	m_angularDrag = a_angulerDrag;
 }

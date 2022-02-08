@@ -21,14 +21,16 @@ public:
 	virtual void FixedUpdate(glm::vec2 a_gravity, float a_timestep);
 	virtual void MakeGizmo();
 
-	bool CheckBoxCorners(const Box& a_box, glm::vec2& a_contract, 
+	bool CheckBoxCorners(const Box& a_box, glm::vec2& a_contact, 
 		int& a_numContract, float& a_pen, glm::vec2& a_edgeNormal);
 
-	float GetWidth() { return m_extents.x * 2; }
-	float GetHieght() { return m_extents.y * 2; }
-	glm::vec2 GetExtents() { return m_extents; }
-	glm::vec2 GetLocalX() { return m_localX; }
-	glm::vec2 GetLocalY() { return m_localY; }
+	float GetWidth() const { return m_extents.x * 2; }
+	float GetHieght() const { return m_extents.y * 2; }
+	glm::vec2 GetExtents() const{ return m_extents; }
+	glm::vec2 GetLocalX() const { return m_localX; }
+	glm::vec2 GetLocalY() const { return m_localY; }
+
+	void SetColour(glm::vec4 a_colour) { m_colour = a_colour; }
 
 protected:
 
@@ -40,7 +42,7 @@ protected:
 	glm::vec2 m_localX;
 	glm::vec2 m_localY;
 
-
+	
 
 };
 

@@ -24,8 +24,6 @@ public:
 
 	glm::vec2 GetNormal() { return m_normal; }
 	float GetDistance() { return m_distanceToOrigin; }
-
-	void SetColour();
 	glm::vec4 GetColour() { return m_colour; }
 
 
