@@ -106,6 +106,26 @@ void PhysicsScene::CheckForCollisions()
 
 }
 
+void PhysicsScene::ApplyContactForces(RigidBody* a_rigidbody1, RigidBody* a_rigidbody2, glm::vec2 a_collisionNorm, float a_pen)
+{
+	if (a_rigidbody1 && a_rigidbody1->IsTrigger() ||
+		a_rigidbody2 && a_rigidbody2->IsTrigger())
+		return;
+
+
+	float rigidbody2Mass = a_rigidbody2 ? a_rigidbody2->GetMass() : INT_MAX;
+
+	float rigidBody1Factor = rigidbody2Mass / (a_rigidbody1->GetMass() + rigidbody2Mass);
+
+	a_rigidbody1->SetPosition(a_rigidbody1->GetPosition() - rigidBody1Factor * a_collisionNorm * a_pen);
+
+	if (a_rigidbody2 != nullptr) 
+	{
+		a_rigidbody2->SetPosition(a_rigidbody2->GetPosition() + (1 - rigidBody1Factor) * a_collisionNorm * a_pen);
+	}
+
+}
+
 bool PhysicsScene::Plane2Plane(PhysicsObject* a_plane, PhysicsObject* a_otherPlane)
 {
 	return false;
@@ -219,8 +239,8 @@ bool PhysicsScene::Sphere2Sphere(PhysicsObject* a_sphere, PhysicsObject* a_other
 
 		if (penertration > 0) 
 		{
-			sphere1->ResolveCollision(sphere2,0.5f * 
-				(sphere1->GetPosition() + sphere2->GetPosition()));
+			sphere1->ResolveCollision(sphere2, 0.5f * 
+				(sphere1->GetPosition() + sphere2->GetPosition()), nullptr, penertration);
 			return true;
 		}
 	}
@@ -282,7 +302,7 @@ bool PhysicsScene::Box2Sphere(PhysicsObject* a_box, PhysicsObject* a_sphere)
 		{
 			glm::vec2 direction = glm::normalize(sphereToBox);
 			glm::vec2 contact = closestPointInBoxWorld;
-			box->ResolveCollision(sphere, contact, &direction);
+			box->ResolveCollision(sphere, contact, &direction, penertration);
 			return true;
 		}
 
@@ -303,15 +323,15 @@ bool PhysicsScene::Box2Box(PhysicsObject* a_box, PhysicsObject* a_otherBox)
 		glm::vec2 contact(0, 0);
 		float pen = 0;
 		int numContract = 0;
+
 		box1->CheckBoxCorners(*box2, contact, numContract, pen, norm);
-		if (box2->CheckBoxCorners(*box1, contact, numContract, pen, norm)) 
-		{
+
+		if (box2->CheckBoxCorners(*box1, contact, numContract, pen, norm)) 	
 			norm = -norm;
-		}
-		if (pen > 0) 
-		{
+		
+		if (pen > 0) 		
 			box1->ResolveCollision(box2, contact / float(numContract), &norm);
-		}
+		
 		return true;
 	}
 	return false;

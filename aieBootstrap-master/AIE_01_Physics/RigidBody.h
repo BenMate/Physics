@@ -5,8 +5,8 @@
 #include <glm/glm.hpp>
 
 //global constant variables
-const float MIN_LINEAR_THRESHOLD = 0.0f;
-const float MIN_ANGULAR_THRESHOLD = 0.0f;
+const float MIN_LINEAR_THRESHOLD = 0.01f;
+const float MIN_ANGULAR_THRESHOLD = 0.001f;
 
 class RigidBody : public PhysicsObject
 {
@@ -24,7 +24,6 @@ public:
 	{	std::cout << "position: " << m_Position.x << ', ' <<
 		m_Position.y << std::endl; }
 
-
 	void ResolveCollision(RigidBody* a_otherActor, glm::vec2 a_contact,
 		glm::vec2* a_collisionNormal = nullptr, float a_pen = 0);
 
@@ -32,20 +31,25 @@ public:
 	
 	glm::vec2 GetPosition() const { return m_Position; }
 	glm::vec2 GetVelocity() const { return m_Velocity; }
+
 	float GetRotation() const { return m_Rotation; }
-	float GetMass() const { return m_Mass; }
+	float GetMass() const { return m_isKinematic ? INT_MAX : m_Mass; }
 	float GetAngularVelocity() const { return m_anglurVelocity; }
 	float GetMoment() const { return m_isKinematic ? INT_MAX : m_moment; }
-	bool GetIsKinamatic() const { return m_isKinematic; }
+	void  SetMass(const float m_mass);
 
-	void SetMass(const float m_mass);
+	void SetPosition(glm::vec2 a_position) { m_Position = a_position; }
 
+	void  SetKinematic(bool a_state) { m_isKinematic = a_state; }
+	bool  GetIsKinamatic() const { return m_isKinematic; }
 	float GetKineticEnergy();
 
 	float GetLinearDrag() const { return m_linearDrag; }
 	float GetAngularDrag() const { return m_angularDrag; }
-	void SetLinearDrag(const float a_linearDrag);
-	void SetAngularDrag(const float a_angulerDrag);
+	void  SetLinearDrag(const float a_linearDrag);
+	void  SetAngularDrag(const float a_angulerDrag);
+
+	void OnTriggerEnter(PhysicsObject* a_otherObject);
 
 	
 protected:
@@ -56,8 +60,6 @@ protected:
 	float m_moment;
 	float m_linearDrag;
 	float m_angularDrag;
-
-	
 
 	glm::vec2 m_Position;
 	glm::vec2 m_Velocity; 
