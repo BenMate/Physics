@@ -26,11 +26,8 @@ public:
 
 protected:
 
-	//map the state and name together
 	std::map<const char*, IGameState*> m_states;
-	//get a list of the 'stack' of states
 	std::list<IGameState*> m_stack;
-	//get a list of commands
 	std::list<std::function<void()>> m_commands;
 };
 

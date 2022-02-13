@@ -28,7 +28,7 @@ void RigidBody::FixedUpdate(glm::vec2 a_gravity, float a_timeStep)
 		//check every object that is inside and called OnTriggerEnter
 		//on if they havnt registered inside of us this frame, they had to of exited
 		//therefore we can remove them from our list and call triggerExit.
-		for (auto it = m_objectsInside.begin(); it != m_objectsInside.end(); it++ )
+		for (auto it = m_objectsInside.begin(); it != m_objectsInside.end(); it++)
 		{
 			if (std::find(m_objectsInsideThisFrame.begin(), m_objectsInsideThisFrame.end(), 
 				*it) == m_objectsInsideThisFrame.end()) 

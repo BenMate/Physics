@@ -9,8 +9,6 @@
 
 #include <Input.h>
 
-//pre delcare classes
-
 class Sphere;
 class Player;
 
@@ -62,10 +60,10 @@ public:
 
 	bool m_isKeyPressed = false;
 
-	//GameStateManager* GetGameStateManager();
+	GameStateManager* GetGameStateManager() { return m_gameStateManager;  }
 	
 private:
 
-	//GameStateManager* m_gameStateManager = nullptr;
+	GameStateManager* m_gameStateManager = nullptr;
 
 };

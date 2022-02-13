@@ -32,13 +32,10 @@ AIE_01_PhysicsApp::~AIE_01_PhysicsApp()
 
 bool AIE_01_PhysicsApp::startup() 
 {
-
 	//increase the ui count to maximise the number
 	//of objects we can draw
 	aie::Gizmos::create(255U, 225U, 65535U, 65535U);
-
 	m_2dRenderer = new aie::Renderer2D();
-
 	// TODO: remember to change this when redistributing a build!
 	// the following path would be used instead: "./font/consolas.ttf"
 	m_font = new aie::Font("../bin/font/consolas.ttf", 32);
@@ -52,31 +49,24 @@ bool AIE_01_PhysicsApp::startup()
 
 	m_physicsScene->SetGravity(glm::vec2(0, -9));
 
-	//CreateSphere();
-	//CreateBeaker();	
-	//CreateRocket();
-	//RotationRest();
-	//CollisionDetectionTest();
-	//ElasticityTest();
-	ObjectTest();
+	//========================================
 
-	//====================================== GameManager Test
+	//ObjectTest();
+	//m_player  = new Player (glm::vec2(-20, 0), glm::vec2(0, 0), 1.7f, 4.0f,
+	//glm::vec4(1, 1, 1, 1));
+	//m_physicsScene->AddActor(m_player);
 
-	//m_gameStateManager = new GameStateManager();
-	//ganestates
-	//m_gameStateManager->SetState("GameState", new GameState(this));
-	//m_gameStateManager->SetState("GameMenu", new MenuState(this));
-	//m_gameStateManager->PushState("GameState");
+	//states
+	m_gameStateManager = new GameStateManager();
+
+	m_gameStateManager->SetState("Game", new GameState(this));
+	//m_gameStateManager->SetState("Menu", new MenuState(this));
+
+	m_gameStateManager->PushState("Game");
 
 
-	//---------------------------------- player
 
-	m_player  = new Player (glm::vec2(-20, 0), glm::vec2(0, 0), 1.7f, 4.0f,
-		glm::vec4(1, 1, 1, 1));
-
-	m_physicsScene->AddActor(m_player);
-
-	//----------------------------------------
+	//=========================================
 	return true;
 }
 
@@ -84,7 +74,7 @@ void AIE_01_PhysicsApp::shutdown()
 {
 	delete m_font;
 	delete m_2dRenderer;
-	//delete m_gameStateManager;
+	delete m_gameStateManager;
 
 }
 
@@ -102,13 +92,10 @@ void AIE_01_PhysicsApp::update(float deltaTime)
 	if (input->isKeyDown(aie::INPUT_KEY_ESCAPE))
 		quit();
 
-	MouseInputTest(input);
+	//MouseInputTest(input);
+	//m_player->UpdateInput(deltaTime, input);
+	m_gameStateManager->Update(deltaTime);
 
-
-	m_player->UpdateInput(deltaTime, input);
-
-	//m_gameStateManager->Update(deltaTime);
-	//UpdateRocket(deltaTime);
 }
 
 void AIE_01_PhysicsApp::draw() 
@@ -133,7 +120,7 @@ void AIE_01_PhysicsApp::draw()
 	// done drawing sprites
 	m_2dRenderer->end();
 
-	//m_gameStateManager->Draw();
+	m_gameStateManager->Draw();
 }
 
 glm::vec2 AIE_01_PhysicsApp::ScreenToWorld(glm::vec2 a_screenPos)
@@ -348,12 +335,18 @@ void AIE_01_PhysicsApp::ObjectTest()
 	Sphere* ball2 = new Sphere(glm::vec2(-40, 0), glm::vec2(0, 0), 4.0f, 4.0f,
 		glm::vec4(1, 0, 0, 1));
 
+	//box bouncy red
+	Box* box2 = new Box(glm::vec2(50, 0), glm::vec2(0, 1), 0.6f, 4, 5, 5,
+		glm::vec4(1, 0, 0, 1));
+
+	box2->SetKinematic(false);
 	ball1->SetKinematic(false);
 	ball2->SetKinematic(true);
 	ball2->SetTrigger(true);
 	
 	m_physicsScene->AddActor(ball1);
 	m_physicsScene->AddActor(ball2);
+	m_physicsScene->AddActor(box2);
 
 	m_physicsScene->AddActor(new Plane(glm::vec2(0, 1), -30));
 	m_physicsScene->AddActor(new Plane(glm::vec2(1, 0), -50));
@@ -369,11 +362,6 @@ void AIE_01_PhysicsApp::ObjectTest()
 		std::cout << "Exited: " << a_other << std::endl;
 	};
 }
-
-//GameStateManager* AIE_01_PhysicsApp::GetGameStateManager()
-//{
-//	return m_gameStateManager;
-//}
 
 
 
