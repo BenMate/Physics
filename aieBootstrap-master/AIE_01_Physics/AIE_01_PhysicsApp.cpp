@@ -40,30 +40,23 @@ bool AIE_01_PhysicsApp::startup()
 	// the following path would be used instead: "./font/consolas.ttf"
 	m_font = new aie::Font("../bin/font/consolas.ttf", 32);
 
-	m_physicsScene = new PhysicsScene();
-
+	//m_physicsScene = new PhysicsScene();
 	/* The lower the value the more accurate the simulation will be,
 	but it will increase he proccessing time required. if the value is to
 	high it will cause the sim to stutter and reduce the stability. */
-	m_physicsScene->SetTimeStep(0.01f);
+	//m_physicsScene->SetTimeStep(0.01f);
+	//m_physicsScene->SetGravity(glm::vec2(0, -9));
 
-	m_physicsScene->SetGravity(glm::vec2(0, -9));
-
-	//========================================
-
-	//ObjectTest();
 	//m_player  = new Player (glm::vec2(-20, 0), glm::vec2(0, 0), 1.7f, 4.0f,
 	//glm::vec4(1, 1, 1, 1));
 	//m_physicsScene->AddActor(m_player);
 
-	//states
 	m_gameStateManager = new GameStateManager();
 
 	m_gameStateManager->SetState("Game", new GameState(this));
 	m_gameStateManager->SetState("Menu", new MenuState(this));
-	m_gameStateManager->PushState("Menu");
 
-	//=========================================
+	m_gameStateManager->PushState("Menu");
 	return true;
 }
 
@@ -80,9 +73,6 @@ void AIE_01_PhysicsApp::update(float deltaTime)
 	aie::Input* input = aie::Input::getInstance();
 
 	aie::Gizmos::clear();
-
-	m_physicsScene->Update(deltaTime);
-	m_physicsScene->Draw();
 
 	m_gameStateManager->Update(deltaTime);
 
@@ -102,6 +92,9 @@ void AIE_01_PhysicsApp::draw()
 	// begin drawing sprites
 	m_2dRenderer->begin();
 
+	//begin drawing gamestate.
+	m_gameStateManager->Draw();
+
 	// draw your stuff here!
 	aie::Gizmos::draw2D(glm::ortho<float>(-m_extents, m_extents,
 		-m_extents / m_aspectRatio, m_extents / m_aspectRatio, -1.0f, 1.0f));
@@ -115,8 +108,6 @@ void AIE_01_PhysicsApp::draw()
 
 	// done drawing sprites
 	m_2dRenderer->end();
-
-	m_gameStateManager->Draw();
 }
 
 glm::vec2 AIE_01_PhysicsApp::ScreenToWorld(glm::vec2 a_screenPos)

@@ -44,7 +44,6 @@ void GameStateManager::Draw()
 	{
 		state->Draw();
 	}
-
 }
 
 void GameStateManager::SetState(const char* name, IGameState* state)

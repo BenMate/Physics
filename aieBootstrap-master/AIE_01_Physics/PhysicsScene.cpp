@@ -54,7 +54,6 @@ void PhysicsScene::Update(float a_dt)
 		accumulatedTime -= m_TimeStep;
 
 		CheckForCollisions();
-
 	}
 }
 

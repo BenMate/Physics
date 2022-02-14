@@ -5,6 +5,8 @@
 class GameStateManager;
 class AIE_01_PhysicsApp;
 class PhysicsScene;
+class Renderer2D;
+class Font;
 
 class MenuState : public IGameState
 {
@@ -19,10 +21,16 @@ public:
 	virtual void Load();
 protected:
 
+	void ChangeCurrentState(aie::Input* input);
+	void CreateObjects();
+
 private:
 
 	AIE_01_PhysicsApp* m_app;
 	GameStateManager* m_gameStateManager = nullptr;
+
 	PhysicsScene* m_physicsScene;
 
+	aie::Renderer2D* m_2dRenderer;
+	aie::Font* m_font;
 };

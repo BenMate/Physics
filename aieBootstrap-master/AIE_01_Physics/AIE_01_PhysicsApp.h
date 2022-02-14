@@ -26,6 +26,9 @@ public:
 
 	glm::vec2 ScreenToWorld(glm::vec2 a_screenPos);
 
+	aie::Font* GetFont() { return m_font; }
+	aie::Renderer2D* Get2dRender() { return m_2dRenderer; }
+
 protected:
 
 	aie::Renderer2D*	m_2dRenderer;
