@@ -21,8 +21,8 @@ public:
 	void PushState(const char* name);
 	void PopState();
 
-	//know the current state.....
-	IGameState* GetCurrentState();
+	//know the current state.
+	IGameState* GetCurrentState() { return m_stack.back(); }
 
 protected:
 

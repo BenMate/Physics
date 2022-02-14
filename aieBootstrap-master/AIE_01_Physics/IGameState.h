@@ -1,8 +1,11 @@
 #pragma once
 
+#include "PhysicsScene.h"
+
 class IGameState
 {
 public :
+
 	IGameState() {};
 	virtual ~IGameState() {};
 

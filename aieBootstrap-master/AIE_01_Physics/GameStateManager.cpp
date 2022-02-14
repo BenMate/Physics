@@ -1,5 +1,6 @@
 #include "GameStateManager.h"
 #include "IGameState.h"
+#include "AIE_01_PhysicsApp.h"
 
 GameStateManager::GameStateManager()
 {
@@ -56,19 +57,20 @@ void GameStateManager::SetState(const char* name, IGameState* state)
 			m_states[name]->UnLoad();
 			delete m_states[name];
 		}
-		});
 
-	if (m_states[name] != nullptr) 
-	{
-		m_states[name]->Load();
-	}
+		m_states[name] = state;
+
+		if (m_states[name] != nullptr)		
+			m_states[name]->Load();
+	
+		});
 }
 
 void GameStateManager::PushState(const char* name)
 {
 
 	m_commands.push_back([=]() {
-		m_stack.pop_back();
+		m_stack.push_back(m_states[name]);
 	});
 }
 
@@ -77,10 +79,4 @@ void GameStateManager::PopState()
 	m_commands.push_back([=]() {
 		m_stack.pop_back();
 		});
-}
-
-IGameState* GameStateManager::GetCurrentState()
-{
-	return m_stack.back();
-	
 }

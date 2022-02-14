@@ -11,7 +11,7 @@ class GameState : public IGameState
 
 public:
 	GameState(AIE_01_PhysicsApp* app);
-	virtual ~GameState();
+	~GameState();
 
 	virtual void Update(float a_dt);
 	virtual void Draw();

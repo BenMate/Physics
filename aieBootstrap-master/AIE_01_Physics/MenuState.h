@@ -1,8 +1,10 @@
 #pragma once
 #include "IGameState.h"
 
+
 class GameStateManager;
 class AIE_01_PhysicsApp;
+class PhysicsScene;
 
 class MenuState : public IGameState
 {
@@ -21,4 +23,6 @@ private:
 
 	AIE_01_PhysicsApp* m_app;
 	GameStateManager* m_gameStateManager = nullptr;
+	PhysicsScene* m_physicsScene;
+
 };

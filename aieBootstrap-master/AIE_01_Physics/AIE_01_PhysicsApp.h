@@ -1,18 +1,15 @@
 #pragma once
 
+#include <Input.h>
+
 #include "Application.h"
 #include "Renderer2D.h"
+
 #include "PhysicsScene.h"
-
-#include "GameState.h"
-#include "MenuState.h"
-
-#include <Input.h>
 
 class Sphere;
 class Player;
 
-class IGameState;
 class GameStateManager;
 
 class AIE_01_PhysicsApp : public aie::Application {
@@ -40,7 +37,6 @@ protected:
 	Player* m_player;
 
 	float timer = 0.0f;
-
 
 	//=====================================
 	const float m_extents = 100;

@@ -2,14 +2,10 @@
 
 #include "AIE_01_PhysicsApp.h"
 
-#include "GameState.h"
 #include "GameStateManager.h"
-
 #include "IGameState.h"
-#include "MenuState.h"
 
-
-
+#include "GameState.h"
 
 
 GameState::GameState(AIE_01_PhysicsApp* app) : m_app(app)
@@ -29,7 +25,7 @@ void GameState::Update(float a_dt)
 	if (currenState != this)
 		return;
 
-
+	std::cout << "gamestate update" << std::endl;
 
 }
 
@@ -45,7 +41,7 @@ void GameState::Draw()
 
 void GameState::Unload()
 {
-	
+	std::cout << "gamestate UnLoaded" << std::endl;
 }
 
 

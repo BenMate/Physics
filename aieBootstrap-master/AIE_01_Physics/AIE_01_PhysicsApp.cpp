@@ -60,11 +60,8 @@ bool AIE_01_PhysicsApp::startup()
 	m_gameStateManager = new GameStateManager();
 
 	m_gameStateManager->SetState("Game", new GameState(this));
-	//m_gameStateManager->SetState("Menu", new MenuState(this));
-
-	m_gameStateManager->PushState("Game");
-
-
+	m_gameStateManager->SetState("Menu", new MenuState(this));
+	m_gameStateManager->PushState("Menu");
 
 	//=========================================
 	return true;
@@ -75,7 +72,6 @@ void AIE_01_PhysicsApp::shutdown()
 	delete m_font;
 	delete m_2dRenderer;
 	delete m_gameStateManager;
-
 }
 
 void AIE_01_PhysicsApp::update(float deltaTime)
@@ -88,14 +84,14 @@ void AIE_01_PhysicsApp::update(float deltaTime)
 	m_physicsScene->Update(deltaTime);
 	m_physicsScene->Draw();
 
+	m_gameStateManager->Update(deltaTime);
+
 	// exit the application
 	if (input->isKeyDown(aie::INPUT_KEY_ESCAPE))
 		quit();
 
 	//MouseInputTest(input);
 	//m_player->UpdateInput(deltaTime, input);
-	m_gameStateManager->Update(deltaTime);
-
 }
 
 void AIE_01_PhysicsApp::draw() 
