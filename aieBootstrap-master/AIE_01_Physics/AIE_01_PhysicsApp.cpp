@@ -18,6 +18,7 @@
 
 #include "GameState.h"
 #include "MenuState.h"
+#include "GuideState.h"
 //------------------------------
 
 AIE_01_PhysicsApp::AIE_01_PhysicsApp() 
@@ -32,30 +33,21 @@ AIE_01_PhysicsApp::~AIE_01_PhysicsApp()
 
 bool AIE_01_PhysicsApp::startup() 
 {
-	//increase the ui count to maximise the number
-	//of objects we can draw
+	//increase the ui count to maximise the number of objects we can draw
 	aie::Gizmos::create(255U, 225U, 65535U, 65535U);
 	m_2dRenderer = new aie::Renderer2D();
 	// TODO: remember to change this when redistributing a build!
 	// the following path would be used instead: "./font/consolas.ttf"
 	m_font = new aie::Font("../bin/font/consolas.ttf", 32);
 
-	//m_physicsScene = new PhysicsScene();
-	/* The lower the value the more accurate the simulation will be,
-	but it will increase he proccessing time required. if the value is to
-	high it will cause the sim to stutter and reduce the stability. */
-	//m_physicsScene->SetTimeStep(0.01f);
-	//m_physicsScene->SetGravity(glm::vec2(0, -9));
-
 	//m_player  = new Player (glm::vec2(-20, 0), glm::vec2(0, 0), 1.7f, 4.0f,
 	//glm::vec4(1, 1, 1, 1));
 	//m_physicsScene->AddActor(m_player);
 
 	m_gameStateManager = new GameStateManager();
-
 	m_gameStateManager->SetState("Game", new GameState(this));
 	m_gameStateManager->SetState("Menu", new MenuState(this));
-
+	m_gameStateManager->SetState("Guide", new GuideState(this));
 	m_gameStateManager->PushState("Menu");
 	return true;
 }
@@ -69,14 +61,11 @@ void AIE_01_PhysicsApp::shutdown()
 
 void AIE_01_PhysicsApp::update(float deltaTime)
 {
-	// input example
 	aie::Input* input = aie::Input::getInstance();
-
 	aie::Gizmos::clear();
 
 	m_gameStateManager->Update(deltaTime);
 
-	// exit the application
 	if (input->isKeyDown(aie::INPUT_KEY_ESCAPE))
 		quit();
 
@@ -101,10 +90,10 @@ void AIE_01_PhysicsApp::draw()
 
 	char fps[32];
 	sprintf_s(fps, 32, "FPS: %i", getFPS());
-	m_2dRenderer->drawText(m_font, fps, 0, 720 - 32);
+	m_2dRenderer->drawText(m_font, fps, 0, getWindowHeight() - 30);
 
 	// output some text, uses the last used colour
-	m_2dRenderer->drawText(m_font, "Press ESC to quit", 10, 10);
+	//m_2dRenderer->drawText(m_font, "Press ESC to quit", 10, 10);
 
 	// done drawing sprites
 	m_2dRenderer->end();
@@ -133,7 +122,6 @@ void AIE_01_PhysicsApp::CreateSphere()
 	Sphere* ball2 = new Sphere(glm::vec2(10, 0), glm::vec2(0, 0), 1.6f, 4.0f,
 		glm::vec4(0, 1, 0, 1));
 
-	//adds 2 balls
 	m_physicsScene->AddActor(ball);
 	m_physicsScene->AddActor(ball2);
 

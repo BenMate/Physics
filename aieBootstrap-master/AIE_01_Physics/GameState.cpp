@@ -49,12 +49,15 @@ void GameState::Update(float a_dt)
 	//when x occurs the state will change
 	ChangeCurrentState(input);
 
+	
+	
+
 }
 
 void GameState::Draw()
 {
 	m_2dRenderer->drawText(m_font, "Game", 1200, 690);
-
+	
 	m_physicsScene->Draw();
 }
 
@@ -75,7 +78,11 @@ void GameState::ChangeCurrentState(aie::Input* input)
 
 void GameState::CreateObjects()
 {
-	Sphere* ball = new Sphere(glm::vec2(0, 0), glm::vec2(0, 0), 1.6f, 4.0f,
+	Sphere* ball = new Sphere(glm::vec2(0, 0), glm::vec2(0, 0), 1.6f, 2.5f,
 		glm::vec4(1, 0, 0, 1));
 	m_physicsScene->AddActor(ball);
+
+
+
+
 }
