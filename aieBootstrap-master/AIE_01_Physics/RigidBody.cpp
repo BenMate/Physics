@@ -48,27 +48,25 @@ void RigidBody::FixedUpdate(glm::vec2 a_gravity, float a_timeStep)
 	//clear this list now for the next frame
 	m_objectsInsideThisFrame.clear();
 
-	if (m_isKinematic) 
+	if (m_hasLinearVelocity && !m_isKinematic) 
 	{
-		m_Velocity = glm::vec2(0,0);
-		m_anglurVelocity = 0;
-		return;
+		m_Velocity -= m_Velocity * m_linearDrag * a_timeStep;
+		m_Position += GetVelocity() * a_timeStep;
+
+		if (glm::length(m_Velocity) < MIN_LINEAR_THRESHOLD)
+			m_Velocity = glm::vec2(0, 0);
+
+		ApplyForce(a_gravity * GetMass() * a_timeStep, glm::vec2(0, 0));
 	}
-	
-	m_Velocity -= m_Velocity * m_linearDrag * a_timeStep;
-	m_anglurVelocity -= m_anglurVelocity * m_angularDrag * a_timeStep;
 
-	m_Position += GetVelocity() * a_timeStep;
-	m_Rotation += m_anglurVelocity * a_timeStep;
+	if (m_hasAngularVelocity && !m_isKinematic)
+	{
+		m_anglurVelocity -= m_anglurVelocity * m_angularDrag * a_timeStep;
+		m_Rotation += m_anglurVelocity * a_timeStep;
 
-	if (glm::length(m_Velocity) < MIN_LINEAR_THRESHOLD)
-		m_Velocity = glm::vec2(0, 0);
-
-	if (glm::abs(m_anglurVelocity) < MIN_ANGULAR_THRESHOLD)
-		m_anglurVelocity = 0;
-	
-	ApplyForce(a_gravity * GetMass() * a_timeStep, glm::vec2(0, 0));
-
+		if (glm::abs(m_anglurVelocity) < MIN_ANGULAR_THRESHOLD)
+			m_anglurVelocity = 0;
+	}	
 }
 
 void RigidBody::ResolveCollision(RigidBody* a_otherActor, glm::vec2 a_contact,
@@ -77,7 +75,7 @@ void RigidBody::ResolveCollision(RigidBody* a_otherActor, glm::vec2 a_contact,
 	//register that a collision has occurred and these objects have overlapped
 	m_objectsInsideThisFrame.push_back(a_otherActor);
 	a_otherActor->m_objectsInsideThisFrame.push_back(this);
-	
+
 	//we need to find the vector between their 
 	//centers or use the provided directional force
 
@@ -112,15 +110,15 @@ void RigidBody::ResolveCollision(RigidBody* a_otherActor, glm::vec2 a_contact,
 			ApplyForce(-impact, a_contact - m_Position);
 
 			a_otherActor->ApplyForce(impact, a_contact - a_otherActor->GetPosition());
-		}		
-		else 
+		}
+		else
 		{
 			OnTriggerEnter(a_otherActor);
 			a_otherActor->OnTriggerEnter(this);
 		}
 	}
 
-	if (a_pen > 0) 
+	if (a_pen > 0)
 	{
 		PhysicsScene::ApplyContactForces(this, a_otherActor, normal, a_pen);
 	}
@@ -128,9 +126,18 @@ void RigidBody::ResolveCollision(RigidBody* a_otherActor, glm::vec2 a_contact,
 
 void RigidBody::ApplyForce(glm::vec2 a_force, glm::vec2 a_contact)
 {
-	m_Velocity += a_force / GetMass();
-	m_anglurVelocity += (a_force.y * a_contact.x - a_force.x * a_contact.y) / GetMoment();
+	if (m_allowExteriorForces)
+		m_Velocity += a_force / GetMass();
 
+	if (m_allowExteriorForces)
+		m_anglurVelocity += (a_force.y * a_contact.x - a_force.x * a_contact.y) / GetMoment();
+
+}
+
+glm::vec2 RigidBody::ToWorld(glm::vec2 a_localPos)
+{
+	return m_Position + m_localX * a_localPos.x 
+					  + m_localY * a_localPos.y;
 }
 
 void RigidBody::SetMass(const float m_mass)
@@ -141,8 +148,8 @@ void RigidBody::SetMass(const float m_mass)
 
 float RigidBody::GetKineticEnergy()
 {
-	return 0.5f * (m_Mass * glm::dot(m_Velocity, m_Velocity) +
-		m_moment * m_anglurVelocity * m_anglurVelocity);
+	return 0.5f * (GetMass() * glm::dot(m_Velocity, m_Velocity) +
+		GetMoment() * m_anglurVelocity * m_anglurVelocity);
 }
 
 void RigidBody::SetLinearDrag(const float a_linearDrag)

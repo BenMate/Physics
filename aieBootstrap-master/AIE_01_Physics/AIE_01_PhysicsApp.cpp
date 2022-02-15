@@ -11,6 +11,7 @@
 #include "Plane.h"
 #include "Box.h"
 #include "Player.h"
+#include "Spring.h"
 
 //game states -----------------
 #include "GameStateManager.h"
@@ -40,15 +41,15 @@ bool AIE_01_PhysicsApp::startup()
 	// the following path would be used instead: "./font/consolas.ttf"
 	m_font = new aie::Font("../bin/font/consolas.ttf", 32);
 
-	//m_player  = new Player (glm::vec2(-20, 0), glm::vec2(0, 0), 1.7f, 4.0f,
-	//glm::vec4(1, 1, 1, 1));
-	//m_physicsScene->AddActor(m_player);
+	m_physicsScene = new PhysicsScene();
+	m_physicsScene->SetTimeStep(0.01f);
+	m_physicsScene->SetGravity(glm::vec2(0.0f, -9.0f));
 
 	m_gameStateManager = new GameStateManager();
 	m_gameStateManager->SetState("Game", new GameState(this));
 	m_gameStateManager->SetState("Menu", new MenuState(this));
 	m_gameStateManager->SetState("Guide", new GuideState(this));
-	m_gameStateManager->PushState("Menu");
+	m_gameStateManager->PushState("Game");
 	return true;
 }
 
@@ -65,12 +66,10 @@ void AIE_01_PhysicsApp::update(float deltaTime)
 	aie::Gizmos::clear();
 
 	m_gameStateManager->Update(deltaTime);
+	m_physicsScene->Update(deltaTime);
 
 	if (input->isKeyDown(aie::INPUT_KEY_ESCAPE))
 		quit();
-
-	//MouseInputTest(input);
-	//m_player->UpdateInput(deltaTime, input);
 }
 
 void AIE_01_PhysicsApp::draw() 
@@ -84,13 +83,15 @@ void AIE_01_PhysicsApp::draw()
 	//begin drawing gamestate.
 	m_gameStateManager->Draw();
 
+	m_physicsScene->Draw();
+
 	// draw your stuff here!
 	aie::Gizmos::draw2D(glm::ortho<float>(-m_extents, m_extents,
 		-m_extents / m_aspectRatio, m_extents / m_aspectRatio, -1.0f, 1.0f));
 
 	char fps[32];
 	sprintf_s(fps, 32, "FPS: %i", getFPS());
-	m_2dRenderer->drawText(m_font, fps, 0, getWindowHeight() - 30);
+	m_2dRenderer->drawText(m_font, fps, 50, getWindowHeight() - 30);
 
 	// output some text, uses the last used colour
 	//m_2dRenderer->drawText(m_font, "Press ESC to quit", 10, 10);
@@ -336,6 +337,33 @@ void AIE_01_PhysicsApp::ObjectTest()
 	{
 		std::cout << "Exited: " << a_other << std::endl;
 	};
+}
+
+void AIE_01_PhysicsApp::SpringTest(int a_amount)
+{
+	Sphere* prev = nullptr;
+	
+	for (int i = 0; i < a_amount; i++)
+	{
+		//spawn a new sphere below the last.
+		Sphere* ball = new Sphere(glm::vec2(i * 3, 30 - i * 5), glm::vec2(0), 10, 2, glm::vec4(0,0,1,1));
+
+		if (i == 0) ball->SetKinematic(true);
+
+		m_physicsScene->AddActor(ball);
+
+		if (prev) 
+			m_physicsScene->AddActor(new Spring(ball, prev, 10, 500));
+		prev = ball;
+		
+	}
+
+	//add a kinamatic box
+	Box* box = new Box(glm::vec2(0, -20), glm::vec2(0), 0.3f, 20,
+		glm::vec2(8, 2), glm::vec4(0, 1, 1, 1));
+
+	m_physicsScene->AddActor(box);
+
 }
 
 

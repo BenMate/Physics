@@ -13,28 +13,35 @@ class RigidBody : public PhysicsObject
 
 public:
 
-	RigidBody(ShapeType a_shapeID, glm::vec2 a_position, 
+	RigidBody(ShapeType a_shapeID, glm::vec2 a_position,
 		glm::vec2 a_velocity, float a_rotation, float a_mass);
 
 	~RigidBody() {};
 
 	virtual void FixedUpdate(glm::vec2 a_gravity, float a_timeStep);
 
-	virtual void Debug() 
-	{	std::cout << "position: " << m_Position.x << ', ' <<
-		m_Position.y << std::endl; }
+	virtual void Debug()
+	{
+		std::cout << "position: " << m_Position.x << ', ' <<
+			m_Position.y << std::endl;
+	}
 
 	void ResolveCollision(RigidBody* a_otherActor, glm::vec2 a_contact,
 		glm::vec2* a_collisionNormal = nullptr, float a_pen = 0);
 
 	void ApplyForce(glm::vec2 a_force, glm::vec2 a_contact);
-	
+
+	glm::vec2 ToWorld(glm::vec2 a_localPos);
+
 	glm::vec2 GetPosition() const { return m_Position; }
 	glm::vec2 GetVelocity() const { return m_Velocity; }
 
 	float GetRotation() const { return m_Rotation; }
 	float GetMass() const { return m_isKinematic ? INT_MAX : m_Mass; }
+
 	float GetAngularVelocity() const { return m_anglurVelocity; }
+	void SetAngularVelocity(float a_aVel) { m_anglurVelocity = a_aVel; }
+
 	float GetMoment() const { return m_isKinematic ? INT_MAX : m_moment; }
 	void  SetMass(const float m_mass);
 
@@ -43,6 +50,15 @@ public:
 	void  SetKinematic(bool a_state) { m_isKinematic = a_state; }
 	bool  GetIsKinamatic() const { return m_isKinematic; }
 	float GetKineticEnergy();
+
+	void SetHasLinearVelocity(bool a_state) { m_hasLinearVelocity = a_state; }
+	bool GetHasLinearVelocity() { return m_hasLinearVelocity; }
+
+	bool GetHasAngulerVelocity(){ return m_hasAngularVelocity;}
+	void SetHasAngulerVelocity(bool a_state) { m_hasLinearVelocity = a_state; }
+
+	bool GetAllowExteriorForces() { return m_allowExteriorForces; }
+	void SetAllowExteriorForces(bool state) { m_allowExteriorForces = state; }
 
 	float GetLinearDrag() const { return m_linearDrag; }
 	float GetAngularDrag() const { return m_angularDrag; }
@@ -61,9 +77,17 @@ protected:
 	float m_linearDrag;
 	float m_angularDrag;
 
+	bool m_hasLinearVelocity = true;
+	bool m_hasAngularVelocity = true;
+	bool m_allowExteriorForces = true;
+
 	glm::vec2 m_Position;
 	glm::vec2 m_Velocity; 
 
+	//We will store the local x and y axes of the box 
+	//based on its angle of rotation
+	glm::vec2 m_localX;
+	glm::vec2 m_localY;
 
 };
 

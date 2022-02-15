@@ -21,8 +21,10 @@ public:
 
 protected:
 
-	void ChangeCurrentState(aie::Input* input);
 	void CreateObjects();
+	void DrawGizmos();
+
+	void UpdatePlayerInput(aie::Input* input, float a_dt);
 
 
 private:
@@ -34,4 +36,13 @@ private:
 	aie::Renderer2D* m_2dRenderer;
 	aie::Font* m_font;
 	PhysicsScene* m_physicsScene;
+
+	//colour values....
+	glm::vec4 m_red = glm::vec4(1, 0, 0, 1);
+	glm::vec4 m_green = glm::vec4(0, 1, 0, 1);
+	glm::vec4 m_blue = glm::vec4(0, 0, 1, 1);
+	glm::vec4 m_gray = glm::vec4(0.6, 0.6, 0.6, 0.6);
+
+	float m_totalTime = 2.5f;
+	float m_timer = 2.5f;
 };

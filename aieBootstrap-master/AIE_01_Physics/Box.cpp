@@ -10,7 +10,6 @@ Box::Box(glm::vec2 a_position, glm::vec2 a_velocity, float a_rotation,
 {
 	m_extents = glm::vec2(a_width / 2, a_height / 2);
 	m_colour = glm::vec4(0, 0, 1, 1);
-	m_isKinematic = true;
 	m_moment = 1.0f / 12.0f * a_mass * a_width * a_height;
 }
 
@@ -20,7 +19,6 @@ Box::Box(glm::vec2 a_position, glm::vec2 a_velocity, float a_rotation,
 {
 	m_extents = glm::vec2(a_width / 2, a_height / 2);
 	m_colour = a_colour;
-	m_isKinematic = true;
 	m_moment = 1.0f / 12.0f * a_mass * a_width * a_height;
 }
 
@@ -30,7 +28,6 @@ Box::Box(glm::vec2 a_position, glm::vec2 a_velocity, float a_rotation,
 {
 	m_extents = glm::vec2(a_dimensions.x / 2, a_dimensions.y / 2);
 	m_colour = glm::vec4(0, 0, 1, 1);
-	m_isKinematic = true;
 	m_moment = 1.0f / 12.0f * a_mass * a_dimensions.x * a_dimensions.y;
 
 }
@@ -41,7 +38,6 @@ Box::Box(glm::vec2 a_position, glm::vec2 a_velocity, float a_rotation,
 {
 	m_extents = glm::vec2(a_dimensions.x / 2, a_dimensions.y / 2);
 	m_colour = glm::vec4(0, 0, 1, 1);
-	m_isKinematic = true;
 	m_moment = 1.0f / 12.0f * a_mass * a_dimensions.x * a_dimensions.y;
 
 }

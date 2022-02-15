@@ -2,7 +2,6 @@
 #include <Gizmos.h>
 #include <glm/ext.hpp>
 
-#include "PhysicsScene.h"
 #include "AIE_01_PhysicsApp.h"
 
 #include "GameStateManager.h"
@@ -12,6 +11,7 @@
 #include "Sphere.h"
 #include "Plane.h"
 #include "Box.h"
+#include "Spring.h"
 
 
 MenuState::MenuState(AIE_01_PhysicsApp* app) : m_app(app)
@@ -122,6 +122,7 @@ void MenuState::DrawGizmos()
 	aie::Gizmos::add2DCircle(glm::vec2(-30, 5), 2, 32, glm::vec4(0.4f, 0.4f, 0.4f, 0.8f));
 	aie::Gizmos::add2DCircle(glm::vec2(-30, -10), 2, 32, glm::vec4(0.4f, 0.4f, 0.4f, 0.8f));
 	aie::Gizmos::add2DCircle(glm::vec2(-30, -26), 2, 32, glm::vec4(0.4f, 0.4f, 0.4f, 0.8f));
+
 }
 
 void MenuState::UpdateMenuBar()

@@ -56,6 +56,7 @@ public:
 	void ElasticityTest();
 	void MouseInputTest(aie::Input* a_input);
 	void ObjectTest();
+	void SpringTest(int a_amount);
 
 	bool m_isKeyPressed = false;
 

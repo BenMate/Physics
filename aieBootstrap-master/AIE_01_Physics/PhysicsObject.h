@@ -11,6 +11,7 @@
 
 enum ShapeType
 {
+	JOINT = -1,
 	PLANE = 0,
 	SPHERE,
 	BOX,
@@ -36,6 +37,7 @@ public:
 
 	float GetElasticity() { return m_elasticity; }
 	void SetElasticity(float a_elasticity) { m_elasticity = a_elasticity; }
+
 	bool IsTrigger() { return m_isTrigger; }
 	void SetTrigger(bool a_trigger) { m_isTrigger = a_trigger; }
 
@@ -46,7 +48,9 @@ protected:
 
 	ShapeType m_shapeID;
 	float m_elasticity;
-	bool m_isKinematic;
+
+	bool m_isKinematic = false;
+
 
 	bool m_isTrigger;
 

@@ -7,20 +7,19 @@
 
 Plane::Plane(glm::vec2 a_normal, float a_distanceToOrigin) : PhysicsObject(PLANE)
 {
-	m_normal = a_normal;
+	m_normal = glm::normalize(a_normal);
 	m_distanceToOrigin = a_distanceToOrigin;
-	m_colour = glm::vec4(0, 1, 0, 1);
+	m_colour = glm::vec4(0.4, 0.4, 0.4, 0.8);
 	m_isKinematic = true;
 	m_isTrigger = false;
 	m_elasticity = 1;
-
 }
 
 Plane::Plane() : PhysicsObject(PLANE)
 {
 	m_normal = glm::vec2(0, 1);
 	m_distanceToOrigin = 0;
-	m_colour = glm::vec4(1,1,1,1);
+	m_colour = glm::vec4(0.4, 0.4, 0.4, 0.8);
 	m_isKinematic = true;
 	m_isTrigger = false;
 	m_elasticity = 1;
@@ -42,15 +41,17 @@ void Plane::MakeGizmo()
 	glm::vec2 parallel(m_normal.y, -m_normal.x);
 	glm::vec4 colourFade = m_colour;
 
-	colourFade.a = 0;
-	colourFade.r = 0;
+	colourFade.r = 0.4f;
+	colourFade.g = 0.4f;
+	colourFade.b = 0.4f;
+	colourFade.a = 0.7f;
 
 	glm::vec2 start = centerPoint + (parallel * lineSegmentLength);
 	glm::vec2 end = centerPoint - (parallel * lineSegmentLength);
 
 	//aie::Gizmos::add2DLine(start, end, m_colour);
 
-	aie::Gizmos::add2DLine(start, end, glm::vec4(1, 0, 0, 1));
+	aie::Gizmos::add2DLine(start, end, glm::vec4(0.4, 0.4, 0.4, 0.8));
 
 	aie::Gizmos::add2DTri(start, end, start - m_normal * 10.0f, m_colour, 
 		m_colour, colourFade);
