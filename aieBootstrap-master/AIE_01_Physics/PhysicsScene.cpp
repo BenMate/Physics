@@ -11,7 +11,7 @@
 #include "Plane.h"
 
 PhysicsScene::PhysicsScene() : 
-	m_TimeStep(0.1f),m_gravity(glm::vec2(0,0))
+	m_TimeStep(0.01f),m_gravity(glm::vec2(0,0))
 {
 	
 }

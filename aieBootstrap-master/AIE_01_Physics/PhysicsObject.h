@@ -47,7 +47,7 @@ public:
 protected:
 
 	ShapeType m_shapeID;
-	float m_elasticity;
+	float m_elasticity = 0.8f;
 
 	bool m_isKinematic = false;
 
