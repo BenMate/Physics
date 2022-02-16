@@ -80,31 +80,44 @@ void MenuState::ChangeCurrentState(aie::Input* input)
 
 void MenuState::CreateObjects()
 {
-	Sphere* ball = new Sphere(glm::vec2(0, 40), glm::vec2(0, 0), 10.0f, 4.0f,
-		glm::vec4(0.6f, 0.6f, 0.6f, 0.9f));
-	m_physicsScene->AddActor(ball);
-	ball->SetElasticity(1.3f);
-	ball->SetAngularDrag(0);
+	//pins
+	
+	//bottom left
+	Sphere* pin1 = new Sphere(glm::vec2(-60, -20), glm::vec2(0, 0), 10.0f, 3.0f,
+		glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
+	m_physicsScene->AddActor(pin1); pin1->SetElasticity(0.5f); pin1->SetKinematic(true);
+	
+	Sphere* pin2 = new Sphere(glm::vec2(-50, -50), glm::vec2(0, 0), 10.0f, 3.0f,
+		glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
+	m_physicsScene->AddActor(pin2); pin2->SetElasticity(0.5f); pin2->SetKinematic(true);
 
-	Sphere* ball2 = new Sphere(glm::vec2(-11, 30), glm::vec2(0, 0), 10.0f, 4.0f,
-		glm::vec4(0.6f, 0.6f, 0.6f, 0.9f));
-	m_physicsScene->AddActor(ball2);
-	ball2->SetElasticity(1.3f);
-	ball2->SetAngularDrag(0);
+	//top left
+	Sphere* pin5 = new Sphere(glm::vec2(-70, 10), glm::vec2(0, 0), 10.0f, 3.0f,
+		glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
+	m_physicsScene->AddActor(pin5); pin5->SetElasticity(0.5f); pin5->SetKinematic(true);
 
-	Sphere* ball3 = new Sphere(glm::vec2(10, 30), glm::vec2(0, 0), 10.0f, 4.0f,
-		glm::vec4(0.6f, 0.6f, 0.6f, 0.9f));
-	m_physicsScene->AddActor(ball3);
-	ball3->SetElasticity(1.3f);
-	ball3->SetAngularDrag(0);
+	Sphere* pin6 = new Sphere(glm::vec2(-80, 40), glm::vec2(0, 0), 10.0f, 3.0f,
+		glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
+	m_physicsScene->AddActor(pin6); pin6->SetElasticity(0.5f); pin6->SetKinematic(true);
 
-	Box* box = new Box(glm::vec2(-2, 20), glm::vec2(0, 0), 0, 10, 35, 7, glm::vec4(0.4f, 0.4f, 0.4f, 0.8f));
-	m_physicsScene->AddActor(box);
-	box->SetElasticity(2.0f);
+	//top right
+	Sphere* pin3 = new Sphere(glm::vec2(70, 10), glm::vec2(0, 0), 10.0f, 3.0f,
+		glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
+	m_physicsScene->AddActor(pin3); pin3->SetElasticity(0.5f); pin3->SetKinematic(true);
 
+	Sphere* pin4 = new Sphere(glm::vec2(80, 40), glm::vec2(0, 0), 10.0f, 3.0f,
+		glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
+	m_physicsScene->AddActor(pin4); pin4->SetElasticity(0.5f); pin4->SetKinematic(true);
 
-	ball2->ApplyForce(glm::vec2(-20, -20.0), ball2->GetPosition());
-	ball3->ApplyForce(glm::vec2(10, 10), ball3->GetPosition());
+	//bottom right
+	Sphere* pin7 = new Sphere(glm::vec2(60, -20), glm::vec2(0, 0), 10.0f, 3.0f,
+		glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
+	m_physicsScene->AddActor(pin7); pin7->SetElasticity(0.5f); pin7->SetKinematic(true);
+
+	Sphere* pin8 = new Sphere(glm::vec2(50, -50), glm::vec2(0, 0), 10.0f, 3.0f,
+		glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
+	m_physicsScene->AddActor(pin8); pin8->SetElasticity(0.5f); pin8->SetKinematic(true);
+
 }
 
 void MenuState::DrawGizmos()
@@ -133,7 +146,7 @@ void MenuState::UpdateMenuBar(float a_dt)
 		//spawn random objects base on time
 		if (r == 1) 
 		{
-				Sphere* randomBall = new Sphere(glm::vec2(randXPos, 60), glm::vec2(0, 0), 10.0f, randSize,
+				Sphere* randomBall = new Sphere(glm::vec2(randXPos, 80), glm::vec2(0, 0), 10.0f, randSize,
 					glm::vec4(0.6f, 0.6f, 0.6f, 0.9f));
 				m_physicsScene->AddActor(randomBall);
 				randomBall->SetAngularVelocity(3.0f);
@@ -141,7 +154,7 @@ void MenuState::UpdateMenuBar(float a_dt)
 
 		else
 		{
-			Sphere* randomBall2 = new Sphere(glm::vec2(-randXPos, 50), glm::vec2(0, 0), 10.0f, randSize,
+			Sphere* randomBall2 = new Sphere(glm::vec2(-randXPos, 80), glm::vec2(0, 0), 10.0f, randSize,
 				m_darkGray);
 			m_physicsScene->AddActor(randomBall2);
 			randomBall2->SetAngularVelocity(2.0f);

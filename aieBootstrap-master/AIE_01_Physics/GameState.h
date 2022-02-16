@@ -42,7 +42,9 @@ private:
 	glm::vec4 m_green = glm::vec4(0, 1, 0, 1);
 	glm::vec4 m_blue = glm::vec4(0, 0, 1, 1);
 	glm::vec4 m_gray = glm::vec4(0.6, 0.6, 0.6, 0.6);
+	
+	glm::vec2 m_noVel = glm::vec2(0.0f, 0.0f);
 
 	float m_totalTime = 2.5f;
-	float m_timer = 2.5f;
+	float m_timer = 0.0f;
 };

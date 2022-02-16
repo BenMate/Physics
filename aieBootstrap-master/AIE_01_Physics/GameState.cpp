@@ -97,8 +97,8 @@ void GameState::UpdatePlayerInput(aie::Input* input, float a_dt)
 	{
 		if (input->wasMouseButtonPressed(0))
 		{
-			Sphere* player = new Sphere(glm::vec2(85, -20), glm::vec2(0, 0), 1.6f, 3.0f, m_red);
-			player->ApplyForce(glm::vec2(0, -80), glm::vec2(0));
+			Sphere* player = new Sphere(glm::vec2(85, -20), m_noVel, 1.6f, 3.0f, m_red);
+			player->ApplyForce(glm::vec2(0, -80), m_noVel);
 			m_physicsScene->AddActor(player);
 			player->SetElasticity(1.0f);
 
@@ -112,19 +112,19 @@ void GameState::CreateObjects()
 {
 	#pragma region PlayerObjects
 	//bounce pads
-	Sphere* topBouncer = new Sphere(glm::vec2(70, 16), glm::vec2(0, 0), 1.6f, 5.0f, m_red);
+	Sphere* topBouncer = new Sphere(glm::vec2(70, 16), m_noVel, 1.6f, 5.0f, m_red);
 	m_physicsScene->AddActor(topBouncer);
 	topBouncer->SetKinematic(true);
 	topBouncer->SetElasticity(0.5f);
 
-	Box* topRightBox = new Box(glm::vec2(93, 52), glm::vec2(0), -0.65f, 7, 13, 5, m_red);
+	Box* topRightBox = new Box(glm::vec2(93, 52), m_noVel, -0.65f, 7, 13, 5, m_red);
 	m_physicsScene->AddActor(topRightBox);
 	topRightBox->SetElasticity(0.7f);
 	topRightBox->SetKinematic(true);
 	topRightBox->SetAllowExteriorForces(false);
 
 	//temp - make a spring launcher instead
-	Box* bottomBouncer = new Box(glm::vec2(87, -44), glm::vec2(0), -0.1f, 7, 13, 5, m_red);
+	Box* bottomBouncer = new Box(glm::vec2(87, -44), m_noVel, -0.1f, 7, 13, 5, m_red);
 	m_physicsScene->AddActor(bottomBouncer);
 	bottomBouncer->SetElasticity(3.0f);
 	bottomBouncer->SetKinematic(true);
@@ -139,7 +139,7 @@ void GameState::CreateObjects()
 	m_physicsScene->AddActor(LeftPlane);
 
 	Plane* bottomPlane = new Plane(glm::vec2(glm::vec2(0, 1)), -51);
-	m_physicsScene->AddActor(bottomPlane);
+	m_physicsScene->AddActor(bottomPlane); bottomPlane->SetElasticity(0.1f);
 
 	Plane* topPlane = new Plane(glm::vec2(glm::vec2(0, -1)), -51);
 	m_physicsScene->AddActor(topPlane);
@@ -153,14 +153,14 @@ void GameState::CreateObjects()
 	Box* wallBox2 = new Box(glm::vec2(50, 0), glm::vec2(0, 1), 0, 4, 20, 4, m_gray);
 	m_physicsScene->AddActor(wallBox2);	
 	wallBox2->SetHasLinearVelocity(false);
-	wallBox2->SetAngularVelocity(-7.0f);
+	wallBox2->SetAngularVelocity(7.0f);
 	wallBox2->SetAngularDrag(0);
 	wallBox2->SetAllowExteriorForces(false);
 
 	Box* wallBox3 = new Box(glm::vec2(10, 0), glm::vec2(0, 1), 0, 4, 20, 4, m_gray);
 	m_physicsScene->AddActor(wallBox3);
 	wallBox3->SetHasLinearVelocity(false);
-	wallBox3->SetAngularVelocity(-7.0f);
+	wallBox3->SetAngularVelocity(7.0f);
 	wallBox3->SetAngularDrag(0);
 	wallBox3->SetAllowExteriorForces(false);
 
@@ -182,34 +182,51 @@ void GameState::CreateObjects()
 	#pragma region MapDots
 
 	//top row
-	Sphere* dot1R1 = new Sphere(glm::vec2(-70, 30), glm::vec2(0), 1, 2.5f, m_gray);
+	Sphere* dot1R1 = new Sphere(glm::vec2(-70, 30), m_noVel, 1, 2.5f, m_gray);
 	m_physicsScene->AddActor(dot1R1);
 	dot1R1->SetElasticity(0.3f); dot1R1->SetKinematic(true);
 
-	Sphere* dot2R1 = new Sphere(glm::vec2(-30, 30), glm::vec2(0), 1, 2.5f, m_gray);
+	Sphere* dot2R1 = new Sphere(glm::vec2(-30, 30), m_noVel, 1, 2.5f, m_gray);
 	m_physicsScene->AddActor(dot2R1);
 	dot2R1->SetElasticity(0.3f); dot2R1->SetKinematic(true);
 
-	Sphere* dot3R1 = new Sphere(glm::vec2(10, 30), glm::vec2(0), 1, 2.5f, m_gray);
+	Sphere* dot3R1 = new Sphere(glm::vec2(10, 30), m_noVel, 1, 2.5f, m_gray);
 	m_physicsScene->AddActor(dot3R1);
 	dot3R1->SetElasticity(0.3f); dot3R1->SetKinematic(true);
 
-	Sphere* dot4R1 = new Sphere(glm::vec2(50, 30), glm::vec2(0), 1, 2.5f, m_gray);
+	Sphere* dot4R1 = new Sphere(glm::vec2(50, 30), m_noVel, 1, 2.5f, m_gray);
 	m_physicsScene->AddActor(dot4R1);
 	dot4R1->SetElasticity(0.3f); dot4R1->SetKinematic(true);
 
 	//second row
-	Sphere* dot1R2 = new Sphere(glm::vec2(-50, 15), glm::vec2(0), 1, 2.5f, m_gray);
+	Sphere* dot1R2 = new Sphere(glm::vec2(-50, 15), m_noVel, 1, 2.5f, m_gray);
 	m_physicsScene->AddActor(dot1R2);
 	dot1R2->SetElasticity(0.3f); dot1R2->SetKinematic(true);
 
-	Sphere* dot2R2 = new Sphere(glm::vec2(-10, 15), glm::vec2(0), 1, 2.5f, m_gray);
+	Sphere* dot2R2 = new Sphere(glm::vec2(-10, 15), m_noVel, 1, 2.5f, m_gray);
 	m_physicsScene->AddActor(dot2R2);
 	dot2R2->SetElasticity(0.3f); dot2R2->SetKinematic(true);
 
-	Sphere* dot3R2 = new Sphere(glm::vec2(30, 15), glm::vec2(0), 1, 2.5f, m_gray);
+	Sphere* dot3R2 = new Sphere(glm::vec2(30, 15), m_noVel, 1, 2.5f, m_gray);
 	m_physicsScene->AddActor(dot3R2);
 	dot3R2->SetElasticity(0.3f); dot3R2->SetKinematic(true);
+
+	//third row
+	Sphere* dot1R3 = new Sphere(glm::vec2(-70, -20), m_noVel, 1, 2.5f, m_gray);
+	m_physicsScene->AddActor(dot1R3);
+	dot1R3->SetElasticity(0.3f); dot1R3->SetKinematic(true);
+
+	Sphere* dot2R3 = new Sphere(glm::vec2(-30, -20), m_noVel, 1, 2.5f, m_gray);
+	m_physicsScene->AddActor(dot2R3);
+	dot2R3->SetElasticity(0.3f); dot2R3->SetKinematic(true);
+
+	Sphere* dot3R3 = new Sphere(glm::vec2(10, -20), m_noVel, 1, 2.5f, m_gray);
+	m_physicsScene->AddActor(dot3R3);
+	dot3R3->SetElasticity(0.3f); dot3R3->SetKinematic(true);
+
+	Sphere* dot4R3 = new Sphere(glm::vec2(50, -20), m_noVel, 1, 2.5f, m_gray);
+	m_physicsScene->AddActor(dot4R3);
+	dot4R3->SetElasticity(0.3f); dot4R3->SetKinematic(true);
 
 	#pragma endregion
 
