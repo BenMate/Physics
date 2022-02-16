@@ -24,7 +24,7 @@ protected:
 	void ChangeCurrentState(aie::Input* input);
 	void CreateObjects();
 	void DrawGizmos();
-	void UpdateMenuBar();
+	void UpdateMenuBar(float a_dt);
 
 private:
 
@@ -35,4 +35,9 @@ private:
 
 	aie::Renderer2D* m_2dRenderer;
 	aie::Font* m_font;
+
+	float m_timeLimit = 2.0f;
+	float m_totalTime = 0.0f;
+
+	glm::vec4 m_darkGray = glm::vec4(0.6, 0.6, 0.6, 0.9);
 };

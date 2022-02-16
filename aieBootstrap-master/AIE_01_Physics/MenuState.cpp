@@ -46,7 +46,7 @@ void MenuState::Update(float a_dt)
 	aie::Input* input = aie::Input::getInstance();
 	ChangeCurrentState(input);
 
-	UpdateMenuBar();
+	UpdateMenuBar(a_dt);
 }
 
 void MenuState::Draw()
@@ -105,7 +105,6 @@ void MenuState::CreateObjects()
 
 	ball2->ApplyForce(glm::vec2(-20, -20.0), ball2->GetPosition());
 	ball3->ApplyForce(glm::vec2(10, 10), ball3->GetPosition());
-
 }
 
 void MenuState::DrawGizmos()
@@ -118,15 +117,39 @@ void MenuState::DrawGizmos()
 	aie::Gizmos::add2DCircle(glm::vec2(0, 0), 70, 32, glm::vec4(0.1f, 0.1f, 0.1f, 0.5f));
 	aie::Gizmos::add2DCircle(glm::vec2(0, 0), 60, 32, glm::vec4(0.1, 0.1, 0.1, 0.4f));
 	aie::Gizmos::add2DCircle(glm::vec2(0, 0), 50, 32, glm::vec4(0.1, 0.1, 0.1, 0.3f));
-	//circles near text
-	aie::Gizmos::add2DCircle(glm::vec2(-30, 5), 2, 32, glm::vec4(0.4f, 0.4f, 0.4f, 0.8f));
-	aie::Gizmos::add2DCircle(glm::vec2(-30, -10), 2, 32, glm::vec4(0.4f, 0.4f, 0.4f, 0.8f));
-	aie::Gizmos::add2DCircle(glm::vec2(-30, -26), 2, 32, glm::vec4(0.4f, 0.4f, 0.4f, 0.8f));
-
 }
 
-void MenuState::UpdateMenuBar()
+void MenuState::UpdateMenuBar(float a_dt)
 {
+	m_totalTime += a_dt;
+
+	if (m_totalTime > m_timeLimit) 
+	{
+		//random values for objects to spawn
+		int r = (rand() % 2) + 1, 
+			randXPos = (rand() % 70) + 1, 
+			randSize = (rand()% 7) + 3;
+
+		//spawn random objects base on time
+		if (r == 1) 
+		{
+				Sphere* randomBall = new Sphere(glm::vec2(randXPos, 60), glm::vec2(0, 0), 10.0f, randSize,
+					glm::vec4(0.6f, 0.6f, 0.6f, 0.9f));
+				m_physicsScene->AddActor(randomBall);
+				randomBall->SetAngularVelocity(3.0f);
+		}
+
+		else
+		{
+			Sphere* randomBall2 = new Sphere(glm::vec2(-randXPos, 50), glm::vec2(0, 0), 10.0f, randSize,
+				m_darkGray);
+			m_physicsScene->AddActor(randomBall2);
+			randomBall2->SetAngularVelocity(2.0f);
+		}
+
+		std::cout << "Spawning Object" << std::endl;
+		m_totalTime = 0;
+	}
 
 
 }

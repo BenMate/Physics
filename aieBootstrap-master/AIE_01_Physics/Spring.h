@@ -31,7 +31,7 @@ public:
 
 
 
-private:
+protected:
 
 	RigidBody* m_actor1;
 	RigidBody* m_actor2;
@@ -43,7 +43,6 @@ private:
 	float m_restLength;
 	//this will be our restoring force
 	float m_springCoeffincient;
-
 
 };
 

@@ -57,6 +57,7 @@ public:
 	void MouseInputTest(aie::Input* a_input);
 	void ObjectTest();
 	void SpringTest(int a_amount);
+	void SoftBodyTest();
 
 	bool m_isKeyPressed = false;
 
