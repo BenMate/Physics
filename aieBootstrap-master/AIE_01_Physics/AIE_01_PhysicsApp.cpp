@@ -42,15 +42,15 @@ bool AIE_01_PhysicsApp::startup()
 	// the following path would be used instead: "./font/consolas.ttf"
 	m_font = new aie::Font("../bin/font/consolas.ttf", 32);
 
-	m_physicsScene = new PhysicsScene();
-	m_physicsScene->SetTimeStep(0.01f);
-	m_physicsScene->SetGravity(glm::vec2(0.0f, -9.0f));
+	//m_physicsScene = new PhysicsScene();
+	//m_physicsScene->SetTimeStep(0.01f);
+	//m_physicsScene->SetGravity(glm::vec2(0.0f, -9.0f));
 
 	m_gameStateManager = new GameStateManager();
 	m_gameStateManager->SetState("Game", new GameState(this));
 	m_gameStateManager->SetState("Menu", new MenuState(this));
 	m_gameStateManager->SetState("Guide", new GuideState(this));
-	m_gameStateManager->PushState("Game");
+	m_gameStateManager->PushState("Menu");
 	return true;
 }
 
@@ -67,7 +67,7 @@ void AIE_01_PhysicsApp::update(float deltaTime)
 	aie::Gizmos::clear();
 
 	m_gameStateManager->Update(deltaTime);
-	m_physicsScene->Update(deltaTime);
+	//m_physicsScene->Update(deltaTime);
 
 	if (input->isKeyDown(aie::INPUT_KEY_ESCAPE))
 		quit();
@@ -84,7 +84,7 @@ void AIE_01_PhysicsApp::draw()
 	//begin drawing gamestate.
 	m_gameStateManager->Draw();
 
-	m_physicsScene->Draw();
+	//m_physicsScene->Draw();
 
 	// draw your stuff here!
 	aie::Gizmos::draw2D(glm::ortho<float>(-m_extents, m_extents,
@@ -112,7 +112,6 @@ glm::vec2 AIE_01_PhysicsApp::ScreenToWorld(glm::vec2 a_screenPos)
 
 	worldPos.x *= 2.0f * m_extents / getWindowWidth();
 	worldPos.y *= 2.0f * m_extents / (m_aspectRatio * getWindowHeight());
-
 
 	return worldPos;
 }

@@ -37,35 +37,20 @@ void GameState::Load()
 
 void GameState::Update(float a_dt)
 {
-	//stops updating if the currentstate != this state eg paused
-	auto currentState = m_app->GetGameStateManager()->GetCurrentState();
-	if (currentState != this)
-		return;
-
 	//set the players input to a value for a frame
 	aie::Input* input = aie::Input::getInstance();
 
 	//update physics
 	m_physicsScene->Update(a_dt);
 
+	
 	UpdatePlayerInput(input, a_dt);
 }
 
 void GameState::Draw()
 {
-	DrawGizmos();
-	
 	m_physicsScene->Draw();
-
-	//convert the timer to a const char and display the text
-	int number = m_timer;
-	if (number < 0) number = 0;
-
-	std::string s = std::to_string(number);
-	char const* pchar = s.c_str();
-
-	m_2dRenderer->drawText(m_font, pchar, m_app->getWindowWidth() - 150, m_app->getWindowHeight() / 2 - 200);
-	
+	DrawText();
 }
 
 void GameState::Unload()
@@ -73,15 +58,8 @@ void GameState::Unload()
 	std::cout << "gamestate UnLoaded" << std::endl;
 }
 
-void GameState::DrawGizmos()
-{
-
-}
-
 void GameState::UpdatePlayerInput(aie::Input* input, float a_dt)
 {
-	//todo: create pause menu to display controls and pause the game
-	//		player spawns ball at set location
 
 	if (input->wasKeyPressed(aie::INPUT_KEY_T))
 	{
@@ -90,47 +68,114 @@ void GameState::UpdatePlayerInput(aie::Input* input, float a_dt)
 		m_gameStateManager->PushState("Menu");
 	}
 
-	//count down
-	m_timer -= a_dt;
-
-	if (m_timer < 0)
-	{
-		if (input->wasMouseButtonPressed(0))
+		if (input->wasMouseButtonPressed(0) && m_ballLimit > 0)
 		{
-			Sphere* player = new Sphere(glm::vec2(85, -20), m_noVel, 1.6f, 3.0f, m_red);
-			player->ApplyForce(glm::vec2(0, -80), m_noVel);
+			//random force added
+			int force = rand() % 150 + 20;
+			Sphere* player = new Sphere(glm::vec2(-90, 45), m_noVel, 1.6f, 2.5f, m_red);
+			player->ApplyForce(glm::vec2(force, 0), m_noVel);
 			m_physicsScene->AddActor(player);
 			player->SetElasticity(1.0f);
 
-			//reset timer when ball is spawned
-			m_timer = m_totalTime;
+			m_ballLimit -= 1;
 		}
-	}
+}
+
+void GameState::DrawText()
+{
+	//convert the timer to a const char and display the score text
+	int points = m_points;
+	std::string s = std::to_string(points);
+	char const* pchar = s.c_str();
+
+	m_2dRenderer->drawText(m_font, "Points : ", m_app->getWindowWidth() - 260, m_app->getWindowHeight() - 30);
+	m_2dRenderer->drawText(m_font, pchar, m_app->getWindowWidth() - 110, m_app->getWindowHeight() - 30);
+
+	//Draw how many balls are left in the top center
+	int ballsLeft = m_ballLimit;
+	std::string b = std::to_string(ballsLeft);
+	char const* balls = b.c_str();
+
+	m_2dRenderer->drawText(m_font, "Balls : ", m_app->getWindowWidth() / 2 - 110, m_app->getWindowHeight() - 30);
+	m_2dRenderer->drawText(m_font, balls, m_app->getWindowWidth() / 2 + 30, m_app->getWindowHeight() - 30);
+
+	//draw the ability to go back to the menu
+	m_2dRenderer->drawText(m_font, "Press 'T' For Menu", m_app->getWindowWidth() / 2 - 170, m_app->getWindowHeight() - 60);
 }
 
 void GameState::CreateObjects()
 {
-	#pragma region PlayerObjects
-	//bounce pads
-	Sphere* topBouncer = new Sphere(glm::vec2(70, 16), m_noVel, 1.6f, 5.0f, m_red);
-	m_physicsScene->AddActor(topBouncer);
-	topBouncer->SetKinematic(true);
-	topBouncer->SetElasticity(0.5f);
+	#pragma region Triggers
 
-	Box* topRightBox = new Box(glm::vec2(93, 52), m_noVel, -0.65f, 7, 13, 5, m_red);
-	m_physicsScene->AddActor(topRightBox);
-	topRightBox->SetElasticity(0.7f);
-	topRightBox->SetKinematic(true);
-	topRightBox->SetAllowExteriorForces(false);
+	Box* boxTrigger1 = new Box(glm::vec2(-78.5f, -50), m_noVel, 0, 4, 33, 14, m_aGreen);
+	m_physicsScene->AddActor(boxTrigger1); boxTrigger1->SetTrigger(true); boxTrigger1->SetKinematic(true);
 
-	//temp - make a spring launcher instead
-	Box* bottomBouncer = new Box(glm::vec2(87, -44), m_noVel, -0.1f, 7, 13, 5, m_red);
-	m_physicsScene->AddActor(bottomBouncer);
-	bottomBouncer->SetElasticity(3.0f);
-	bottomBouncer->SetKinematic(true);
+	boxTrigger1->onTriggerEnter = [=](PhysicsObject* a_other)
+	{
+		m_points += 150;
+		m_ballLimit += 3;
+	};
+
+	Box* boxTrigger2 = new Box(glm::vec2(-45, -50), m_noVel, 0, 4, 25.5f, 14, m_aYellow);
+	m_physicsScene->AddActor(boxTrigger2); boxTrigger2->SetTrigger(true); boxTrigger2->SetKinematic(true);
+
+	boxTrigger2->onTriggerEnter = [=](PhysicsObject* a_other)
+	{
+		m_points += 50;
+		m_ballLimit += 1;
+	};
+
+	Box* boxTrigger3 = new Box(glm::vec2(-15, -50), m_noVel, 0, 4, 25.5f, 14, m_aRed);
+	m_physicsScene->AddActor(boxTrigger3); boxTrigger3->SetTrigger(true); boxTrigger3->SetKinematic(true);
+
+	boxTrigger2->onTriggerEnter = [=](PhysicsObject* a_other)
+	{
+		m_points -= 50;
+	};
+
+	Box* boxTrigger4 = new Box(glm::vec2(15, -50), m_noVel, 0, 4, 25.5f, 14, m_aRed);
+	m_physicsScene->AddActor(boxTrigger4); boxTrigger4->SetTrigger(true); boxTrigger4->SetKinematic(true);
+
+	boxTrigger4->onTriggerEnter = [=](PhysicsObject* a_other)
+	{
+		m_points -= 50;
+	};
+
+	Box* boxTrigger5 = new Box(glm::vec2(45, -50), m_noVel, 0, 4, 25.5f, 14, m_aYellow);
+	m_physicsScene->AddActor(boxTrigger5); boxTrigger5->SetTrigger(true); boxTrigger5->SetKinematic(true);
+	
+	boxTrigger5->onTriggerEnter = [=](PhysicsObject* a_other)
+	{
+		m_points += 50;
+		m_ballLimit += 1;
+	};
+
+	Box* boxTrigger6 = new Box(glm::vec2(78.5f, -50), m_noVel, 0, 4, 32, 14, m_aGreen);
+	m_physicsScene->AddActor(boxTrigger6); boxTrigger6->SetTrigger(true); boxTrigger6->SetKinematic(true);
+
+	boxTrigger6->onTriggerEnter = [=](PhysicsObject* a_other)
+	{
+		m_points += 150;
+		m_ballLimit += 3;
+	};
+
 	#pragma endregion
 
 	#pragma region MapObjectsAndWalls
+	//bottom walls to align the triggers
+	m_pinXPos = -60;
+	for (int i = 0; i < 5; i++)
+	{
+		Box* tWall = new Box(glm::vec2(m_pinXPos, -50), glm::vec2(0, 1), 0, 4, 4, 15, m_gray);
+		tWall->SetKinematic(true); m_physicsScene->AddActor(tWall);
+
+		m_pinXPos += 30;
+	}
+
+	//just a random box in the corner to show where the ball spawns
+	Box* ballSpawner = new Box(glm::vec2(-95, 45), glm::vec2(0, 1), 0, 4, 4, 8, m_red);
+	m_physicsScene->AddActor(ballSpawner); ballSpawner->SetKinematic(true);
+
 	//maps border
 	Plane* rightPlane = new Plane(glm::vec2(glm::vec2(-1, 0)), -95);
 	m_physicsScene->AddActor(rightPlane);
@@ -138,96 +183,68 @@ void GameState::CreateObjects()
 	Plane* LeftPlane = new Plane(glm::vec2(glm::vec2(1, 0)), -95);
 	m_physicsScene->AddActor(LeftPlane);
 
-	Plane* bottomPlane = new Plane(glm::vec2(glm::vec2(0, 1)), -51);
-	m_physicsScene->AddActor(bottomPlane); bottomPlane->SetElasticity(0.1f);
-
 	Plane* topPlane = new Plane(glm::vec2(glm::vec2(0, -1)), -51);
 	m_physicsScene->AddActor(topPlane);
-	
-	//map walls
-	Box* wallBox1 = new Box(glm::vec2(75, -15), glm::vec2(0, 1), 0, 4, 5, 70, m_gray);
-	m_physicsScene->AddActor(wallBox1);
-	wallBox1->SetKinematic(true);
 
 	//center spinners
-	Box* wallBox2 = new Box(glm::vec2(50, 0), glm::vec2(0, 1), 0, 4, 20, 4, m_gray);
-	m_physicsScene->AddActor(wallBox2);	
-	wallBox2->SetHasLinearVelocity(false);
-	wallBox2->SetAngularVelocity(7.0f);
-	wallBox2->SetAngularDrag(0);
-	wallBox2->SetAllowExteriorForces(false);
-
-	Box* wallBox3 = new Box(glm::vec2(10, 0), glm::vec2(0, 1), 0, 4, 20, 4, m_gray);
-	m_physicsScene->AddActor(wallBox3);
-	wallBox3->SetHasLinearVelocity(false);
-	wallBox3->SetAngularVelocity(7.0f);
-	wallBox3->SetAngularDrag(0);
-	wallBox3->SetAllowExteriorForces(false);
-
-	Box* wallBox4 = new Box(glm::vec2(-30, 0), glm::vec2(0, 1), 0, 4, 20, 4, m_gray);
-	m_physicsScene->AddActor(wallBox4);
-	wallBox4->SetHasLinearVelocity(false);
-	wallBox4->SetAngularVelocity(-7.0f);
-	wallBox4->SetAngularDrag(0);
-	wallBox4->SetAllowExteriorForces(false);
-
-	Box* wallBox5 = new Box(glm::vec2(-70, 0), glm::vec2(0, 1), 0, 4, 20, 4, m_gray);
-	m_physicsScene->AddActor(wallBox5);
-	wallBox5->SetHasLinearVelocity(false);
-	wallBox5->SetAngularVelocity(-7.0f);
-	wallBox5->SetAngularDrag(0);
-	wallBox5->SetAllowExteriorForces(false);
+	m_pinXPos = -75;
+	for (int i = 0; i < 6; i++)
+	{
+		Box* spinners = new Box(glm::vec2(m_pinXPos, -16), glm::vec2(0, 1), 0, 20, 21, 4, m_gray);
+		m_physicsScene->AddActor(spinners);
+		spinners->SetHasLinearVelocity(false); spinners->SetAllowExteriorForces(false);
+		spinners->SetAngularDrag(0); spinners->SetAngularVelocity(-6.0f);
+		
+		m_pinXPos += 30;
+	}
 	#pragma endregion
 
 	#pragma region MapDots
-
-	//top row
-	Sphere* dot1R1 = new Sphere(glm::vec2(-70, 30), m_noVel, 1, 2.5f, m_gray);
-	m_physicsScene->AddActor(dot1R1);
-	dot1R1->SetElasticity(0.3f); dot1R1->SetKinematic(true);
-
-	Sphere* dot2R1 = new Sphere(glm::vec2(-30, 30), m_noVel, 1, 2.5f, m_gray);
-	m_physicsScene->AddActor(dot2R1);
-	dot2R1->SetElasticity(0.3f); dot2R1->SetKinematic(true);
-
-	Sphere* dot3R1 = new Sphere(glm::vec2(10, 30), m_noVel, 1, 2.5f, m_gray);
-	m_physicsScene->AddActor(dot3R1);
-	dot3R1->SetElasticity(0.3f); dot3R1->SetKinematic(true);
-
-	Sphere* dot4R1 = new Sphere(glm::vec2(50, 30), m_noVel, 1, 2.5f, m_gray);
-	m_physicsScene->AddActor(dot4R1);
-	dot4R1->SetElasticity(0.3f); dot4R1->SetKinematic(true);
+	//first
+	m_pinXPos = -80;
+	for (int i = 0; i < 9; i++)
+	{
+		Sphere* pinRow = new Sphere(glm::vec2(m_pinXPos, 30), m_noVel, 1, 2.5f, m_gray);
+		m_physicsScene->AddActor(pinRow);
+		pinRow->SetElasticity(0.3f);
+		pinRow->SetKinematic(true);
+		m_pinXPos = m_pinXPos + 20;
+	}
 
 	//second row
-	Sphere* dot1R2 = new Sphere(glm::vec2(-50, 15), m_noVel, 1, 2.5f, m_gray);
-	m_physicsScene->AddActor(dot1R2);
-	dot1R2->SetElasticity(0.3f); dot1R2->SetKinematic(true);
-
-	Sphere* dot2R2 = new Sphere(glm::vec2(-10, 15), m_noVel, 1, 2.5f, m_gray);
-	m_physicsScene->AddActor(dot2R2);
-	dot2R2->SetElasticity(0.3f); dot2R2->SetKinematic(true);
-
-	Sphere* dot3R2 = new Sphere(glm::vec2(30, 15), m_noVel, 1, 2.5f, m_gray);
-	m_physicsScene->AddActor(dot3R2);
-	dot3R2->SetElasticity(0.3f); dot3R2->SetKinematic(true);
+	m_pinXPos = -90;
+	for (int i = 0; i < 10; i++) 
+	{
+		Sphere* pinRow1 = new Sphere(glm::vec2(m_pinXPos, 20), m_noVel, 1, 2.5f, m_gray);
+		m_physicsScene->AddActor(pinRow1);
+		pinRow1->SetElasticity(0.3f);
+		pinRow1->SetKinematic(true);
+		m_pinXPos = m_pinXPos + 20;
+	}
 
 	//third row
-	Sphere* dot1R3 = new Sphere(glm::vec2(-70, -20), m_noVel, 1, 2.5f, m_gray);
-	m_physicsScene->AddActor(dot1R3);
-	dot1R3->SetElasticity(0.3f); dot1R3->SetKinematic(true);
+	m_pinXPos = -80;
+	for (int i = 0; i < 9; i++) 
+	{
+		Sphere* pinRow2 = new Sphere(glm::vec2(m_pinXPos, 10), m_noVel, 1, 2.5f, m_gray);
+		m_physicsScene->AddActor(pinRow2);
+		pinRow2->SetElasticity(0.3f); 
+		pinRow2->SetKinematic(true);
 
-	Sphere* dot2R3 = new Sphere(glm::vec2(-30, -20), m_noVel, 1, 2.5f, m_gray);
-	m_physicsScene->AddActor(dot2R3);
-	dot2R3->SetElasticity(0.3f); dot2R3->SetKinematic(true);
+		m_pinXPos = m_pinXPos + 20;
+	}
 
-	Sphere* dot3R3 = new Sphere(glm::vec2(10, -20), m_noVel, 1, 2.5f, m_gray);
-	m_physicsScene->AddActor(dot3R3);
-	dot3R3->SetElasticity(0.3f); dot3R3->SetKinematic(true);
-
-	Sphere* dot4R3 = new Sphere(glm::vec2(50, -20), m_noVel, 1, 2.5f, m_gray);
-	m_physicsScene->AddActor(dot4R3);
-	dot4R3->SetElasticity(0.3f); dot4R3->SetKinematic(true);
-
+	//forth row
+	m_pinXPos = -90;
+	for (int i = 0; i < 10; i++)
+	{
+		Sphere* pinRow3 = new Sphere(glm::vec2(m_pinXPos, 0), m_noVel, 1, 2.5f, m_gray);
+		m_physicsScene->AddActor(pinRow3);
+		pinRow3->SetElasticity(0.3f);
+		pinRow3->SetKinematic(true);
+		//change the x pos each time
+		m_pinXPos = m_pinXPos + 20;
+	}
 	#pragma endregion
 
 }

@@ -24,8 +24,18 @@ protected:
 	void ChangeCurrentState(aie::Input* input);
 	void CreateObjects();
 	void DrawGizmos();
-	void UpdateMenuBar(float a_dt);
+	void DrawText();
 
+	void UpdateFallingObjects(float a_dt);
+	glm::vec4 RandomColour();
+
+
+	void DrawCircleOnScreen(aie::Input* a_input);
+	glm::vec2 ScreenToWorld(glm::vec2 a_screenPos);
+
+	//=====================================temp
+	const float m_extents = 100;
+	const float m_aspectRatio = 16.0f / 9.0f;
 private:
 
 	AIE_01_PhysicsApp* m_app;
@@ -40,4 +50,6 @@ private:
 	float m_totalTime = 0.0f;
 
 	glm::vec4 m_darkGray = glm::vec4(0.6, 0.6, 0.6, 0.9);
+
+	glm::vec4 m_randColour;
 };

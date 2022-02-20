@@ -22,17 +22,9 @@ Player::~Player()
 
 void Player::UpdateInput(float deltaTime, aie::Input* a_input)
 {
-	//use input keys to move the sphere
-
-	glm::vec2 left  = glm::vec2(-1, 0);
-	glm::vec2 right = glm::vec2(1, 0);
-	glm::vec2 down  = glm::vec2(0, -1);
-	glm::vec2 up    = glm::vec2(0, 1);
-
-	if (a_input->isKeyDown(aie::INPUT_KEY_A)) ApplyForce(left, GetPosition());
-	if (a_input->isKeyDown(aie::INPUT_KEY_D)) ApplyForce(right, GetPosition());
-	if (a_input->isKeyDown(aie::INPUT_KEY_S)) ApplyForce(down, GetPosition());
-	if (a_input->isKeyDown(aie::INPUT_KEY_W)) ApplyForce(up, GetPosition());
+	//use input keys to move the sphere/player
+	if (a_input->isKeyDown(aie::INPUT_KEY_A)) ApplyForce(glm::vec2(-1, 0), glm::vec2(0));
+	if (a_input->isKeyDown(aie::INPUT_KEY_D)) ApplyForce(glm::vec2(1, 0), glm::vec2(0));
 }
 
 void Player::MakeGizmo()
@@ -41,7 +33,6 @@ void Player::MakeGizmo()
 		std::sin(m_Rotation)) * m_Radius;
 
 	aie::Gizmos::add2DCircle(m_Position, m_Radius, 12, m_colour);
-
 	aie::Gizmos::add2DLine(m_Position, m_Position + end, glm::vec4(1, 1, 1, 1));
 }
 
