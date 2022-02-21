@@ -23,6 +23,10 @@ public:
 
 protected:
 
+	void DrawGizmos();
+	void DrawText();
+	void ChangeCurrentState(aie::Input* input);
+
 
 
 private:
