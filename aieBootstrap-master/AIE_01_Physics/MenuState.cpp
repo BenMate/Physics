@@ -23,6 +23,7 @@ MenuState::MenuState(AIE_01_PhysicsApp* app) : m_app(app)
 
 MenuState::~MenuState()
 {
+
 }
 
 void MenuState::Load()
