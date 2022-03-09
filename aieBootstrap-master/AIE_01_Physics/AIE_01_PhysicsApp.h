@@ -7,8 +7,10 @@
 
 #include "PhysicsScene.h"
 
+//temp
 class Sphere;
 class Player;
+//-----------
 
 class GameStateManager;
 
