@@ -31,10 +31,28 @@ void PhysicsScene::AddActor(PhysicsObject* a_actor)
 
 void PhysicsScene::RemoveActor(PhysicsObject* a_actor)
 {
+	//find actor in list and remove it
 	auto it = std::find(m_actors.begin(), m_actors.end(), a_actor);
 	if (it != m_actors.end()) 
 	{
+		//if actor is a ball, remove it.
+		RemoveBall(a_actor);
+			
 		m_actors.erase(it);
+	}
+}
+
+void PhysicsScene::AddBall(PhysicsObject* a_ball) 
+{
+	m_balls.push_back(a_ball);
+}
+
+void PhysicsScene::RemoveBall(PhysicsObject* a_ball) 
+{
+	auto it = std::find(m_balls.begin(), m_balls.end(), a_ball);
+	if (it != m_balls.end())
+	{
+		m_balls.erase(it);
 	}
 }
 
@@ -45,18 +63,16 @@ void PhysicsScene::Update(float a_dt)
 	accumulatedTime += a_dt;
 
 	while (accumulatedTime >= m_TimeStep) 
-	{
+	{		
 		for (auto pActor : m_actors) 
-		{
 			pActor->FixedUpdate(m_gravity, m_TimeStep);
-		}
-
+		
 		accumulatedTime -= m_TimeStep;
 
 		CheckForCollisions();
 	}
 	
-	//new - deletes spheres when they get below 50. 
+	//new - deletes balls when they get below a height
 	for (PhysicsObject* obj : m_actors)
 	{
 		if (obj == nullptr)
@@ -64,7 +80,7 @@ void PhysicsScene::Update(float a_dt)
 
 		Sphere* sphere = dynamic_cast<Sphere*>(obj);
 
-		if (sphere != nullptr && sphere->GetPosition().y < -50)
+		if (sphere != nullptr && sphere->GetPosition().y < -90)
 		{
 			RemoveActor(obj);
 			delete obj;
@@ -95,7 +111,6 @@ void PhysicsScene::CheckForCollisions()
 	int actorCount = m_actors.size();
 
 	//we need to check our collisions against all other objects except this one...
-
 	for (int outer = 0; outer < actorCount - 1; outer++)
 	{
 		for (int inner = outer + 1; inner < actorCount; inner++)
@@ -122,7 +137,6 @@ void PhysicsScene::CheckForCollisions()
 			}
 		}
 	}
-
 }
 
 void PhysicsScene::ApplyContactForces(RigidBody* a_rigidbody1, RigidBody* a_rigidbody2, glm::vec2 a_collisionNorm, float a_pen)

@@ -74,7 +74,7 @@ void GuideState::DrawText()
 
 	m_2dRenderer->drawText(m_font, "|Red box|-50 points", m_app->getWindowWidth() / 2 - 200, m_app->getWindowHeight() - 520);
 	m_2dRenderer->drawText(m_font, "|Yellow Box|+20 points, 1 extra ball", m_app->getWindowWidth() / 2 - 300, m_app->getWindowHeight() - 570);
-	m_2dRenderer->drawText(m_font, "|Green box|+100 points, 3 extra balls", m_app->getWindowWidth() / 2 - 300, m_app->getWindowHeight() - 620);
+	m_2dRenderer->drawText(m_font, "|Green box|+100 points, 2 extra balls", m_app->getWindowWidth() / 2 - 300, m_app->getWindowHeight() - 620);
 }
 
 void GuideState::ChangeCurrentState(aie::Input* input)

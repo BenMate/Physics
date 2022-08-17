@@ -24,6 +24,7 @@ protected:
 	void CreateObjects();
 	void UpdatePlayerInput(aie::Input* input, float a_dt);
 	void DrawText();
+	void DisplayWinText();
 
 private:
 
@@ -44,7 +45,12 @@ private:
 	glm::vec4 m_gray = glm::vec4(0.6, 0.6, 0.6, 0.6);
 	glm::vec4 m_blue = glm::vec4(0, 0, 1, 1);
 	
+	//default box values
 	glm::vec2 m_noVel = glm::vec2(0.0f, 0.0f);
+	float m_rotation = 0.0f;
+	float m_mass = 4.0f;
+	float m_witdh = 33.0f;
+	float m_hieght = 12.0f;
 
 	float m_totalTime = 2.5f;
 	float m_timer = 0.0f;
@@ -54,8 +60,15 @@ private:
 	int m_ballLimit = 10;
 	int m_points = 0;
 
+	//trigger values
+	int m_greenPoints = 100;
+	int m_yellowPoints = 20;
+	int m_redPoints = -50;
+
+	int m_greenBalls = 2;
+	int m_yellowBalls = 1;
+	int m_redBalls = 0;
 
 protected:
 
-	Player* m_player;
 };

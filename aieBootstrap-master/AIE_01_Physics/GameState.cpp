@@ -22,6 +22,7 @@ GameState::GameState(AIE_01_PhysicsApp* app) : m_app(app)
 
 GameState::~GameState()
 {
+
 }
 
 void GameState::Load()
@@ -44,6 +45,8 @@ void GameState::Update(float a_dt)
 	m_physicsScene->Update(a_dt);
 
 	UpdatePlayerInput(input, a_dt);
+
+	
 }
 
 void GameState::Draw()
@@ -57,6 +60,8 @@ void GameState::Unload()
 	std::cout << "gamestate UnLoaded" << std::endl;
 }
 
+
+
 void GameState::UpdatePlayerInput(aie::Input* input, float a_dt)
 {
 
@@ -67,17 +72,17 @@ void GameState::UpdatePlayerInput(aie::Input* input, float a_dt)
 		m_gameStateManager->PushState("Menu");
 	}
 
-		if (input->wasMouseButtonPressed(0) && m_ballLimit > 0)
-		{
-			//random force added
-			int force = rand() % 150 + 20;
-			Sphere* player = new Sphere(glm::vec2(-90, 45), m_noVel, 1.6f, 2.5f, m_red);
-			player->ApplyForce(glm::vec2(force, 0), m_noVel);
-			m_physicsScene->AddActor(player);
-			player->SetElasticity(1.0f);
+	if (input->wasMouseButtonPressed(0) && m_ballLimit > 0)
+	{
+		Sphere* player = new Sphere(glm::vec2(-90, 45), m_noVel, 1.6f, 2.5f, m_red);
+		m_physicsScene->AddActor(player);
+		m_physicsScene->AddBall(player);
 
-			m_ballLimit -= 1;
-		}
+		player->ApplyForce(glm::vec2(rand() % 150 + 20, 0), m_noVel);
+		player->SetElasticity(1.0f);
+
+		m_ballLimit -= 1;
+	}
 }
 
 void GameState::DrawText()
@@ -98,69 +103,144 @@ void GameState::DrawText()
 	m_2dRenderer->drawText(m_font, "Balls : ", m_app->getWindowWidth() / 2 - 110, m_app->getWindowHeight() - 30);
 	m_2dRenderer->drawText(m_font, balls, m_app->getWindowWidth() / 2 + 30, m_app->getWindowHeight() - 30);
 
-	//draw the ability to go back to the menu
-	m_2dRenderer->drawText(m_font, "Press 'T' For Menu", m_app->getWindowWidth() / 2 - 170, m_app->getWindowHeight() - 60);
+	
+	DisplayWinText();
+}
+
+void GameState::DisplayWinText()
+{
+	if (m_physicsScene->IsBallCountZero() && m_ballLimit == 0)
+	{
+		//convert int to const char	
+		std::string s = std::to_string(m_points);
+		char const* points = s.c_str();
+
+		std::cout << "winner" << std::endl;
+
+		//draw the ability to go back to the menu
+		m_2dRenderer->drawText(m_font, "Press 'T' For Menu", m_app->getWindowWidth() / 2 - 170, m_app->getWindowHeight() - 60);
+		m_2dRenderer->drawText(m_font, " - GameOver - ", m_app->getWindowWidth() / 2 - 150, m_app->getWindowHeight() - 100);
+		m_2dRenderer->drawText(m_font, points, m_app->getWindowWidth() / 2 - 40, m_app->getWindowHeight() - 130);
+	}
 }
 
 void GameState::CreateObjects()
 {
-	#pragma region Triggers
+#pragma region Triggers
 
-	//green box
-	Box* boxTrigger1 = new Box(glm::vec2(-78.5f, -50), m_noVel, 0, 4, 33, 14, m_aGreen);
-	m_physicsScene->AddActor(boxTrigger1); boxTrigger1->SetTrigger(true); boxTrigger1->SetKinematic(true);
-	boxTrigger1->onTriggerEnter = [=](PhysicsObject* a_other)
+	Box* redTrigger = new Box(glm::vec2(-78.5f, -50), m_noVel, m_rotation, m_mass, m_witdh, m_hieght, m_aRed);
+	Box* redTriggerTwo = new Box(glm::vec2(-45, -50), m_noVel, m_rotation, m_mass, 25.5f, m_hieght, m_aRed);
+	Box* yellowTrigger = new Box(glm::vec2(-15, -50), m_noVel, m_rotation, m_mass, 25.5f, m_hieght, m_aYellow);
+	Box* yellowTriggerTwo = new Box(glm::vec2(15, -50), m_noVel, m_rotation, m_mass, 25.5f, m_hieght, m_aYellow);
+	Box* greenTrigger = new Box(glm::vec2(45, -50), m_noVel, m_rotation, m_mass, 25.5f, m_hieght, m_aGreen);
+	Box* greenTriggerTwo = new Box(glm::vec2(78.5f, -50), m_noVel, m_rotation, m_mass, m_witdh, m_hieght, m_aGreen);
+
+	m_physicsScene->AddActor(redTrigger);
+	m_physicsScene->AddActor(redTriggerTwo);
+	m_physicsScene->AddActor(yellowTrigger);
+	m_physicsScene->AddActor(yellowTriggerTwo);
+	m_physicsScene->AddActor(greenTrigger);
+	m_physicsScene->AddActor(greenTriggerTwo);
+
+	redTrigger->SetTrigger(true);
+	redTrigger->SetKinematic(true);
+
+	redTriggerTwo->SetTrigger(true);
+	redTriggerTwo->SetKinematic(true);
+
+	yellowTrigger->SetTrigger(true);
+	yellowTrigger->SetKinematic(true);
+
+	yellowTriggerTwo->SetTrigger(true);
+	yellowTriggerTwo->SetKinematic(true);
+
+	greenTrigger->SetTrigger(true);
+	greenTrigger->SetKinematic(true);
+
+	greenTriggerTwo->SetTrigger(true);
+	greenTriggerTwo->SetKinematic(true);
+
+	redTrigger->onTriggerEnter = [=](PhysicsObject* a_other)
 	{
-		m_points += 150;
-		m_ballLimit += 3;
+		if (!a_other->GetShapeID() == 1 || a_other->isKinematic())
+			return;
+
+		m_points += m_redPoints;
+		m_ballLimit += m_redBalls;
+	};
+	redTrigger->onTriggerExit = [=](PhysicsObject* a_other)
+	{
+		m_physicsScene->RemoveActor(a_other);
 	};
 
-	//yellow box
-	Box* boxTrigger2 = new Box(glm::vec2(-45, -50), m_noVel, 0, 4, 25.5f, 14, m_aYellow);
-	m_physicsScene->AddActor(boxTrigger2); boxTrigger2->SetTrigger(true); boxTrigger2->SetKinematic(true);
-	boxTrigger2->onTriggerEnter = [=](PhysicsObject* a_other)
+	redTriggerTwo->onTriggerEnter = [=](PhysicsObject* a_other)
 	{
-		m_points += 50;
-		m_ballLimit += 1;
+
+		if (!a_other->GetShapeID() == 1 || a_other->isKinematic())
+			return;
+
+		m_points += m_redPoints;
+		m_ballLimit += m_redBalls;
+	};
+	redTriggerTwo->onTriggerExit = [=](PhysicsObject* a_other)
+	{
+		m_physicsScene->RemoveActor(a_other);
 	};
 
-	//red box
-	Box* boxTrigger3 = new Box(glm::vec2(-15, -50), m_noVel, 0, 4, 25.5f, 14, m_aRed);
-	m_physicsScene->AddActor(boxTrigger3); boxTrigger3->SetTrigger(true); boxTrigger3->SetKinematic(true);
-	boxTrigger3->onTriggerEnter = [=](PhysicsObject* a_other)
+	yellowTrigger->onTriggerEnter = [=](PhysicsObject* a_other)
 	{
-		m_points -= 50;
+		if (!a_other->GetShapeID() == 1 || a_other->isKinematic())
+			return;
+
+		m_points += m_yellowPoints;
+		m_ballLimit += m_yellowBalls;
+	};
+	yellowTrigger->onTriggerExit = [=](PhysicsObject* a_other)
+	{
+		m_physicsScene->RemoveActor(a_other);
 	};
 
-	//red box
-	Box* boxTrigger4 = new Box(glm::vec2(15, -50), m_noVel, 0, 4, 25.5f, 14, m_aRed);
-	m_physicsScene->AddActor(boxTrigger4); boxTrigger4->SetTrigger(true); boxTrigger4->SetKinematic(true);
-	boxTrigger4->onTriggerEnter = [=](PhysicsObject* a_other)
+	yellowTriggerTwo->onTriggerEnter = [=](PhysicsObject* a_other)
 	{
-		m_points -= 50;
+		if (!a_other->GetShapeID() == 1 || a_other->isKinematic())
+			return;
+
+		m_points += m_yellowPoints;
+		m_ballLimit += m_yellowBalls;
+	};
+	yellowTriggerTwo->onTriggerExit = [=](PhysicsObject* a_other)
+	{
+		m_physicsScene->RemoveActor(a_other);
 	};
 
-	//yellow box
-	Box* boxTrigger5 = new Box(glm::vec2(45, -50), m_noVel, 0, 4, 25.5f, 14, m_aYellow);
-	m_physicsScene->AddActor(boxTrigger5); boxTrigger5->SetTrigger(true); boxTrigger5->SetKinematic(true);
-	boxTrigger5->onTriggerEnter = [=](PhysicsObject* a_other)
+	greenTrigger->onTriggerEnter = [=](PhysicsObject* a_other)
 	{
-		m_points += 50;
-		m_ballLimit += 1;
+		if (!a_other->GetShapeID() == 1 || a_other->isKinematic())
+			return;
+		m_points += m_greenPoints;
+		m_ballLimit += m_greenBalls;
+	};
+	greenTrigger->onTriggerExit = [=](PhysicsObject* a_other)
+	{
+		m_physicsScene->RemoveActor(a_other);
 	};
 
-	//green box
-	Box* boxTrigger6 = new Box(glm::vec2(78.5f, -50), m_noVel, 0, 4, 32, 14, m_aGreen);
-	m_physicsScene->AddActor(boxTrigger6); boxTrigger6->SetTrigger(true); boxTrigger6->SetKinematic(true);
-	boxTrigger6->onTriggerEnter = [=](PhysicsObject* a_other)
+	greenTriggerTwo->onTriggerEnter = [=](PhysicsObject* a_other)
 	{
-		m_points += 150;
-		m_ballLimit += 3;
+		if (!a_other->GetShapeID() == 1 || a_other->isKinematic())
+			return;
+
+		m_points += m_greenPoints;
+		m_ballLimit += m_greenBalls;
+	};
+	greenTriggerTwo->onTriggerExit = [=](PhysicsObject* a_other)
+	{
+		m_physicsScene->RemoveActor(a_other);
 	};
 
-	#pragma endregion
+#pragma endregion
 
-	#pragma region MapObjectsAndWalls
+#pragma region MapObjectsAndWalls
 	//bottom walls to align the triggers
 	m_pinXPos = -60;
 	for (int i = 0; i < 5; i++)
@@ -178,7 +258,7 @@ void GameState::CreateObjects()
 	//maps border
 	Plane* rightPlane = new Plane(glm::vec2(glm::vec2(-1, 0)), -95);
 	m_physicsScene->AddActor(rightPlane);
-	
+
 	Plane* LeftPlane = new Plane(glm::vec2(glm::vec2(1, 0)), -95);
 	m_physicsScene->AddActor(LeftPlane);
 
@@ -193,12 +273,12 @@ void GameState::CreateObjects()
 		m_physicsScene->AddActor(spinners);
 		spinners->SetHasLinearVelocity(false); spinners->SetAllowExteriorForces(false);
 		spinners->SetAngularDrag(0); spinners->SetAngularVelocity(-6.0f);
-		
+
 		m_pinXPos += 30;
 	}
-	#pragma endregion
+#pragma endregion
 
-	#pragma region MapDots
+#pragma region MapDots
 	//first
 	m_pinXPos = -80;
 	for (int i = 0; i < 9; i++)
@@ -212,7 +292,7 @@ void GameState::CreateObjects()
 
 	//second row
 	m_pinXPos = -70;
-	for (int i = 0; i < 8; i++) 
+	for (int i = 0; i < 8; i++)
 	{
 		Box* pinRow1 = new Box(glm::vec2(m_pinXPos, 20), m_noVel, 90, 2.5f, glm::vec2(4, 4), m_blue);
 		m_physicsScene->AddActor(pinRow1);
@@ -223,11 +303,11 @@ void GameState::CreateObjects()
 
 	//third row
 	m_pinXPos = -80;
-	for (int i = 0; i < 9; i++) 
+	for (int i = 0; i < 9; i++)
 	{
 		Sphere* pinRow2 = new Sphere(glm::vec2(m_pinXPos, 10), m_noVel, 1, 2.5f, m_green);
 		m_physicsScene->AddActor(pinRow2);
-		pinRow2->SetElasticity(0.3f); 
+		pinRow2->SetElasticity(0.3f);
 		pinRow2->SetKinematic(true);
 
 		m_pinXPos = m_pinXPos + 20;
@@ -244,6 +324,6 @@ void GameState::CreateObjects()
 		//change the x pos each time
 		m_pinXPos = m_pinXPos + 20;
 	}
-	#pragma endregion
+#pragma endregion
 
 }

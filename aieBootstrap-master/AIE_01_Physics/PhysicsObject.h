@@ -40,6 +40,9 @@ public:
 
 	bool IsTrigger() { return m_isTrigger; }
 	void SetTrigger(bool a_trigger) { m_isTrigger = a_trigger; }
+	
+	bool isKinematic() { return m_isKinematic; }
+	void SetIsKinematic(bool a_kinematic) { m_isKinematic = a_kinematic; }
 
 	std::function<void(PhysicsObject*)> onTriggerEnter;
 	std::function<void(PhysicsObject*)> onTriggerExit;
@@ -50,11 +53,8 @@ protected:
 	float m_elasticity = 0.8f;
 
 	bool m_isKinematic = false;
-
-
 	bool m_isTrigger;
 
 	std::list<PhysicsObject*> m_objectsInside;
 	std::list<PhysicsObject*> m_objectsInsideThisFrame;
 };
-

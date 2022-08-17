@@ -15,6 +15,11 @@ public:
 	void AddActor(PhysicsObject* a_actor);
 	void RemoveActor(PhysicsObject* a_actor);
 
+	void AddBall(PhysicsObject* a_ball);
+	void RemoveBall(PhysicsObject* a_ball);
+
+	bool IsBallCountZero() { return m_balls.empty(); }
+
 	/* this functions will update the physics simulation
 	it calls the update each actor and updates	
 	internally. this will handle collision and resolution */
@@ -61,9 +66,8 @@ protected:
 	/* stores all the physics objects in the
 	scene we create as well as the functions
 	that will add or remove objects */
+
 	std::vector<PhysicsObject*> m_actors;
-
-
-
+	std::vector<PhysicsObject*> m_balls;
 };
 

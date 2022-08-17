@@ -40,7 +40,6 @@ void RigidBody::FixedUpdate(glm::vec2 a_gravity, float a_timeStep)
 					if (it == m_objectsInside.end()) 				
 						break;
 				}
-
 			}
 		}
 	}
@@ -154,7 +153,6 @@ glm::vec2 RigidBody::ToWorld(glm::vec2 a_localPos)
 void RigidBody::SetMass(const float m_mass)
 {
 	m_Mass = m_mass;
-
 }
 
 float RigidBody::GetKineticEnergy()
@@ -175,15 +173,12 @@ void RigidBody::SetAngularDrag(const float a_angulerDrag)
 
 void RigidBody::OnTriggerEnter(PhysicsObject* a_otherObject)
 {
-
 	if (m_isTrigger && std::find(m_objectsInside.begin(), m_objectsInside.end(),
 		a_otherObject) == m_objectsInside.end())
 	{
 		m_objectsInside.push_back(a_otherObject);
 
 		if (onTriggerEnter != nullptr)
-		{
-			onTriggerEnter(a_otherObject);
-		}
+			onTriggerEnter(a_otherObject);		
 	}
 }
